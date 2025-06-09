@@ -1,0 +1,48 @@
+<!-- Camera View -->
+<div *ngIf="currentView === 'camera'" id="cameraView" class="flex flex-col h-screen p-4 md:p-6 fade-in bg-black bg-opacity-50">
+  <!-- Header -->
+  <header class="flex justify-between items-center text-white mb-4">
+    <button id="backBtn" (click)="stopCamera()" class="icon-btn rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-white">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <h1 class="text-xl font-semibold">Vision</h1>
+    <div class="w-6"></div> <!-- Spacer for alignment -->
+  </header>
+
+  <!-- Main Content Area (Video/Image/Response) -->
+  <main class="relative flex-grow flex items-center justify-center bg-black rounded-lg overflow-hidden shadow-xl mb-4">
+    <video #videoFeed *ngIf="showVideoFeed" id="videoFeed" class="w-full h-full object-cover" autoplay playsinline></video>
+    <img #capturedImage *ngIf="showCapturedImage" id="capturedImage" class="w-full h-full object-contain"/>
+
+    <div *ngIf="geminiResponseText" id="geminiResponse" class="absolute inset-0 p-4 bg-black bg-opacity-60 overflow-y-auto no-scrollbar text-lg leading-relaxed flex items-center justify-center text-white">
+      <p>{{ geminiResponseText }}</p>
+    </div>
+
+    <div *ngIf="isLoadingGemini" id="loadingIndicator" class="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+      <div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-white"></div>
+    </div>
+  </main>
+
+  <!-- Prompt Input Area -->
+  <div *ngIf="showPromptArea" class="flex items-center space-x-2 mb-4">
+    <input #promptInputElem id="promptInput" type="text" [(ngModel)]="promptInputValue" (keyup.enter)="callGeminiAPI()" class="flex-grow bg-white/20 border border-white/30 rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-white placeholder-white/70 text-white" placeholder="Ask a question about the image...">
+    <button id="sendPromptBtn" (click)="callGeminiAPI()" class="bg-white text-blue-600 rounded-full p-3 focus:outline-none hover:bg-gray-200">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Footer Controls (Capture Button) -->
+  <footer class="flex justify-center items-center h-24">
+    <button *ngIf="showCaptureButton" id="captureBtn" (click)="captureFrame()" class="bg-white text-red-600 w-20 h-20 rounded-full border-4 border-black/20 focus:outline-none focus:ring-4 focus:ring-white/50 flex items-center justify-center">
+      <div class="w-16 h-16 bg-white rounded-full"></div> <!-- Inner circle for visual -->
+    </button>
+  </footer>
+</div>
+
+<!-- Hidden elements -->
+<canvas id="canvas" #canvas class="hidden"></canvas>
+<input type="file" id="fileInput" #fileInput class="hidden" accept="image/*" (change)="handleFileUpload($event)">

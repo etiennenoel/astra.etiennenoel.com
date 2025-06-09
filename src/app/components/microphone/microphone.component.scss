@@ -1,0 +1,12 @@
+/* Styles for MicrophoneComponent will go here */
+/* For now, it's empty as per the plan */
+/* The component will render the indicator and button together. */
+/* If they need to be styled to appear as one block or with specific spacing, add styles here. */
+
+/* Example to make them appear as a column block in the footer */
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
