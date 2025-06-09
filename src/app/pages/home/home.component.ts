@@ -36,10 +36,6 @@ export class HomeComponent implements AfterViewInit {
     // For example, if other parts of HomeComponent need to react to isListening changes.
   }
 
-  closeLiveMode() {
-    this.showMessage('Closing Live Mode...');
-  }
-
   // --- Camera Interaction ---
 
   openCameraView() {

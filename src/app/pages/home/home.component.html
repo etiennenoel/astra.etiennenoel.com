@@ -2,12 +2,7 @@
 <div *ngIf="currentView === 'live'" id="liveView" class="flex flex-col h-screen justify-between p-4 md:p-6 fade-in">
   <!-- Header -->
   <header class="flex justify-between items-center">
-    <h1 class="text-xl font-semibold">Live</h1>
-    <button id="closeBtn" (click)="closeLiveMode()" class="icon-btn rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-white">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
+    <h1 class="text-xl font-semibold">OnDevice Astra</h1>
   </header>
 
   <!-- Main content area for Live View -->
@@ -16,8 +11,10 @@
   <!-- or the MicrophoneComponent would need to be styled/structured to project parts differently. -->
   <!-- For this step, the original listening indicator div is removed from here. -->
   <div class="flex-grow flex flex-col items-center justify-center">
-    <!-- Placeholder for any other live view content that might go here -->
-    <!-- The listening indicator that was here is now part of app-microphone in the footer -->
+    <!-- Listening Indicator -->
+    <div id="listening-indicator" class="text-center">
+      <p class="text-lg mb-2 opacity-80">{{ isListening ? 'Listening...' : 'Paused' }}</p> <!-- Reduced mb-8 to mb-2 as it's now grouped with button -->
+    </div>
   </div>
 
   <!-- Footer Controls -->
