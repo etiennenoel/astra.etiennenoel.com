@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-home',
-  // standalone: false, // Assuming this is in a module as per original file
+  standalone: false,
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
