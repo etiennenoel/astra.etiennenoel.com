@@ -1,356 +1,100 @@
 <!-- Live View -->
-<div id="liveView" class="flex flex-col h-screen justify-between p-4 md:p-6 fade-in">
-  <header class="flex justify-between items-center w-full">
-    <h1 class="text-xl font-bold">Live</h1>
-    <button id="closeBtn" class="icon-btn rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-white">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+<div *ngIf="currentView === 'live'" id="liveView" class="flex flex-col h-screen justify-between p-4 md:p-6 fade-in">
+  <!-- Header -->
+  <header class="flex justify-between items-center">
+    <h1 class="text-xl font-semibold">Live</h1>
+    <button id="closeBtn" (click)="closeLiveMode()" class="icon-btn rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-white">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
     </button>
   </header>
-  <main class="flex-grow flex items-center justify-center">
-    <div id="listening-indicator" class="text-center">
-      <p class="text-lg mb-8 opacity-80">Listening...</p>
-    </div>
-  </main>
-  <footer class="flex flex-col items-center space-y-6 w-full pb-4">
-    <div class="flex items-center justify-center space-x-4">
-      <button id="cameraBtn" class="icon-btn rounded-full p-4 transition-transform duration-200 ease-in-out hover:scale-110">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-      </button>
-      <button id="micBtn" class="bg-white text-blue-600 rounded-full p-6 pulsing-glow transition-transform duration-200 ease-in-out hover:scale-110 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50">
-        <svg id="micIcon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm5 4a1 1 0 11-2 0V4a1 1 0 112 0v4zM3 9a1 1 0 011-1h1.172a4 4 0 013.998 4.223l.135.811a4.002 4.002 0 01-3.182 3.965A4.002 4.002 0 014.172 15H4a1 1 0 110-2h.172a2 2 0 001.995-2.223l-.135-.81a2 2 0 00-1.995-1.744H4a1 1 0 01-1-1zm12.172 2.223a4 4 0 01-3.998-4.223H15a1 1 0 110 2h-.172a2 2 0 00-1.995 2.223l.135.81a2 2 0 001.995 1.744H16a1 1 0 110 2h-.828a4.002 4.002 0 01-3.998-3.777l-.135-.811A4 4 0 0111.828 9H13a1 1 0 110 2h-.172z" clip-rule="evenodd" /></svg>
-        <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 hidden" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-      </button>
-      <button id="addFileBtn" class="icon-btn rounded-full p-4 transition-transform duration-200 ease-in-out hover:scale-110">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-      </button>
-    </div>
+
+  <!-- Listening Indicator -->
+  <div id="listening-indicator" class="text-center">
+    <p class="text-lg mb-8 opacity-80">{{ isListening ? 'Listening...' : 'Paused' }}</p>
+  </div>
+
+  <!-- Footer Controls -->
+  <footer class="flex justify-around items-center p-4">
+    <button id="cameraBtn" (click)="startCamera()" class="icon-btn rounded-full p-4 transition-transform duration-200 ease-in-out hover:scale-110">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    </button>
+    <button id="micBtn" (click)="toggleListen()"
+            class="rounded-full p-6 transition-transform duration-200 ease-in-out hover:scale-110 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
+            [class.bg-white]="isListening" [class.text-blue-600]="isListening"
+            [class.bg-red-500]="!isListening" [class.text-white]="!isListening"
+            [class.pulsing-glow]="isListening">
+      <svg *ngIf="isListening" id="micIcon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm5 4a1 1 0 11-2 0V4a1 1 0 112 0v4zM3 9a1 1 0 011-1h1.172a4 4 0 013.998 4.223l.135.811a4.002 4.002 0 01-3.182 3.965A4.002 4.002 0 014.172 15H4a1 1 0 110-2h.172a2 2 0 001.995-2.223l-.135-.81a2 2 0 00-1.995-1.744H4a1 1 0 01-1-1zm12.172 2.223a4 4 0 01-3.998-4.223H15a1 1 0 110 2h-.172a2 2 0 00-1.995 2.223l.135.81a2 2 0 001.995 1.744H16a1 1 0 110 2h-.828a4.002 4.002 0 01-3.998-3.777l-.135-.811A4 4 0 0111.828 9H13a1 1 0 110 2h-.172z" clip-rule="evenodd" />
+      </svg>
+      <svg *ngIf="!isListening" id="pauseIcon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+      </svg>
+    </button>
+    <button id="addFileBtn" (click)="triggerFileInputClick()" class="icon-btn rounded-full p-4 transition-transform duration-200 ease-in-out hover:scale-110">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+      </svg>
+    </button>
   </footer>
 </div>
 
 <!-- Camera View -->
-<div id="cameraView" class="hidden flex-col h-screen p-4 md:p-6 fade-in bg-black bg-opacity-50">
-  <header class="flex justify-between items-center w-full z-10">
-    <button id="backBtn" class="icon-btn rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-white">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+<div *ngIf="currentView === 'camera'" id="cameraView" class="flex flex-col h-screen p-4 md:p-6 fade-in bg-black bg-opacity-50">
+  <!-- Header -->
+  <header class="flex justify-between items-center text-white mb-4">
+    <button id="backBtn" (click)="stopCamera()" class="icon-btn rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-white">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
     </button>
-    <h1 class="text-xl font-bold">Vision</h1>
-    <div class="w-8"></div> <!-- Spacer -->
+    <h1 class="text-xl font-semibold">Vision</h1>
+    <div class="w-6"></div> <!-- Spacer for alignment -->
   </header>
 
-  <main class="flex-grow flex flex-col items-center justify-center relative -mt-16">
-    <!-- Camera/Image Display -->
-    <div id="mediaContainer" class="w-full max-w-lg aspect-video bg-black rounded-lg overflow-hidden shadow-lg mb-4 relative">
-      <video id="videoFeed" class="w-full h-full object-cover" autoplay playsinline></video>
-      <img id="capturedImage" class="hidden w-full h-full object-contain"/>
-      <div id="geminiResponse" class="absolute inset-0 p-4 bg-black bg-opacity-60 overflow-y-auto no-scrollbar text-lg leading-relaxed flex items-center justify-center hidden"><p></p></div>
-      <div id="loadingIndicator" class="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden">
-        <div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-white"></div>
-      </div>
+  <!-- Main Content Area (Video/Image/Response) -->
+  <main class="relative flex-grow flex items-center justify-center bg-black rounded-lg overflow-hidden shadow-xl mb-4">
+    <video #videoFeed *ngIf="showVideoFeed" id="videoFeed" class="w-full h-full object-cover" autoplay playsinline></video>
+    <img #capturedImage *ngIf="showCapturedImage" id="capturedImage" class="w-full h-full object-contain"/>
+
+    <div *ngIf="geminiResponseText" id="geminiResponse" class="absolute inset-0 p-4 bg-black bg-opacity-60 overflow-y-auto no-scrollbar text-lg leading-relaxed flex items-center justify-center text-white">
+      <p>{{ geminiResponseText }}</p>
     </div>
 
-    <!-- Prompt Input Area -->
-    <div id="promptArea" class="w-full max-w-lg flex items-center space-x-2 hidden">
-      <input id="promptInput" type="text" class="flex-grow bg-white/20 border border-white/30 rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-white placeholder-white/70" placeholder="Ask a question about the image...">
-      <button id="sendPromptBtn" class="bg-white text-blue-600 rounded-full p-3 focus:outline-none hover:bg-gray-200">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
-      </button>
+    <div *ngIf="isLoadingGemini" id="loadingIndicator" class="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+      <div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-white"></div>
     </div>
   </main>
 
-  <footer class="flex items-center justify-center w-full pb-4">
-    <button id="captureBtn" class="bg-white text-red-600 w-20 h-20 rounded-full border-4 border-black/20 focus:outline-none focus:ring-4 focus:ring-white/50 flex items-center justify-center">
-      <div class="w-16 h-16 bg-white rounded-full"></div>
+  <!-- Prompt Input Area -->
+  <div *ngIf="showPromptArea" class="flex items-center space-x-2 mb-4">
+    <input #promptInputElem id="promptInput" type="text" [(ngModel)]="promptInputValue" (keyup.enter)="callGeminiAPI()" class="flex-grow bg-white/20 border border-white/30 rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-white placeholder-white/70 text-white" placeholder="Ask a question about the image...">
+    <button id="sendPromptBtn" (click)="callGeminiAPI()" class="bg-white text-blue-600 rounded-full p-3 focus:outline-none hover:bg-gray-200">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Footer Controls (Capture Button) -->
+  <footer class="flex justify-center items-center h-24">
+    <button *ngIf="showCaptureButton" id="captureBtn" (click)="captureFrame()" class="bg-white text-red-600 w-20 h-20 rounded-full border-4 border-black/20 focus:outline-none focus:ring-4 focus:ring-white/50 flex items-center justify-center">
+      <div class="w-16 h-16 bg-white rounded-full"></div> <!-- Inner circle for visual -->
     </button>
   </footer>
 </div>
 
 <!-- Hidden elements -->
-<canvas id="canvas" class="hidden"></canvas>
-<input type="file" id="fileInput" class="hidden" accept="image/*">
-<div id="message-box" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-center py-2 px-4 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50"></div>
+<canvas id="canvas" #canvas class="hidden"></canvas>
+<input type="file" id="fileInput" #fileInput class="hidden" accept="image/*" (change)="handleFileUpload($event)">
 
-
-<script>
-  // --- DOM Element References ---
-  const liveView = document.getElementById('liveView');
-  const cameraView = document.getElementById('cameraView');
-  const messageBox = document.getElementById('message-box');
-
-  // Live View Elements
-  const micBtn = document.getElementById('micBtn');
-  const micIcon = document.getElementById('micIcon');
-  const pauseIcon = document.getElementById('pauseIcon');
-  const listeningIndicator = document.getElementById('listening-indicator');
-  const closeBtn = document.getElementById('closeBtn');
-  const cameraBtn = document.getElementById('cameraBtn');
-  const addFileBtn = document.getElementById('addFileBtn');
-
-  // Camera View Elements
-  const backBtn = document.getElementById('backBtn');
-  const videoFeed = document.getElementById('videoFeed');
-  const captureBtn = document.getElementById('captureBtn');
-  const capturedImage = document.getElementById('capturedImage');
-  const canvas = document.getElementById('canvas');
-  const fileInput = document.getElementById('fileInput');
-  const promptArea = document.getElementById('promptArea');
-  const promptInput = document.getElementById('promptInput');
-  const sendPromptBtn = document.getElementById('sendPromptBtn');
-  const geminiResponse = document.getElementById('geminiResponse');
-  const loadingIndicator = document.getElementById('loadingIndicator');
-
-  // --- State Variables ---
-  let isListening = true;
-  let stream = null; // To hold the camera stream
-  let imageBase64 = null; // To hold the captured/uploaded image data
-
-  // --- Event Listeners ---
-
-  // Switch to Camera View
-  cameraBtn.addEventListener('click', startCamera);
-
-  // Return to Live View
-  backBtn.addEventListener('click', stopCamera);
-
-  // Capture photo from video
-  captureBtn.addEventListener('click', captureFrame);
-
-  // Trigger file input
-  addFileBtn.addEventListener('click', () => fileInput.click());
-
-  // Handle file selection
-  fileInput.addEventListener('change', handleFileUpload);
-
-  // Send prompt to Gemini
-  sendPromptBtn.addEventListener('click', callGeminiAPI);
-  promptInput.addEventListener('keyup', (event) => {
-    if (event.key === 'Enter') {
-      callGeminiAPI();
-    }
-  });
-
-  // Toggle listening state (Live View)
-  micBtn.addEventListener('click', () => {
-    isListening = !isListening;
-    updateLiveUI();
-  });
-
-  // Show message on close
-  closeBtn.addEventListener('click', () => showMessage('Closing Live Mode...'));
-
-
-  // --- Core Functions ---
-
-  /**
-   * Requests camera access and switches to the camera view.
-   */
-  async function startCamera() {
-    try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        videoFeed.srcObject = stream;
-        switchToView('camera');
-      } else {
-        showMessage('Camera not supported on this device.');
-      }
-    } catch (error) {
-      console.error("Error accessing camera: ", error);
-      showMessage('Could not access the camera. Please check permissions.');
-      switchToView('live');
-    }
-  }
-
-  /**
-   * Stops the camera stream and returns to the live view.
-   */
-  function stopCamera() {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-      stream = null;
-    }
-    videoFeed.srcObject = null;
-    resetCameraView();
-    switchToView('live');
-  }
-
-  /**
-   * Captures a frame from the video feed and prepares for prompting.
-   */
-  function captureFrame() {
-    canvas.width = videoFeed.videoWidth;
-    canvas.height = videoFeed.videoHeight;
-    const context = canvas.getContext('2d');
-    context.drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
-
-    imageBase64 = canvas.toDataURL('image/png');
-    capturedImage.src = imageBase64;
-
-    videoFeed.classList.add('hidden');
-    capturedImage.classList.remove('hidden');
-    captureBtn.classList.add('hidden');
-    promptArea.classList.remove('hidden');
-  }
-
-  /**
-   * Handles image upload, converts to base64, and prepares for prompting.
-   */
-  function handleFileUpload(event) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        imageBase64 = e.target.result;
-        capturedImage.src = imageBase64;
-
-        switchToView('camera');
-        videoFeed.classList.add('hidden');
-        capturedImage.classList.remove('hidden');
-        captureBtn.classList.add('hidden');
-        promptArea.classList.remove('hidden');
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  /**
-   * Calls the Gemini API with the image and prompt.
-   */
-  async function callGeminiAPI() {
-    const prompt = promptInput.value.trim();
-    if (!prompt || !imageBase64) {
-      showMessage("Please capture an image and ask a question.");
-      return;
-    }
-
-    loadingIndicator.classList.remove('hidden');
-    promptArea.classList.add('hidden');
-
-    // The API expects the base64 string without the data URL prefix
-    const pureBase64 = imageBase64.split(',')[1];
-
-    const payload = {
-      contents: [
-        {
-          role: "user",
-          parts: [
-            { text: prompt },
-            {
-              inlineData: {
-                mimeType: "image/png",
-                data: pureBase64
-              }
-            }
-          ]
-        }
-      ],
-    };
-    const apiKey = ""; // Leave empty, will be handled by the environment
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-    try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-
-      if (result.candidates && result.candidates.length > 0 &&
-        result.candidates[0].content && result.candidates[0].content.parts &&
-        result.candidates[0].content.parts.length > 0) {
-        const text = result.candidates[0].content.parts[0].text;
-        displayGeminiResponse(text);
-      } else {
-        displayGeminiResponse("Sorry, I couldn't understand that. Please try again.");
-        console.error("Unexpected API response structure:", result);
-      }
-    } catch (error) {
-      console.error("Error calling Gemini API:", error);
-      displayGeminiResponse("An error occurred. Please try again later.");
-    } finally {
-      loadingIndicator.classList.add('hidden');
-      // Don't show prompt area again immediately, wait for user to go back.
-    }
-  }
-
-
-  // --- UI Helper Functions ---
-
-  /**
-   * Switches between the 'live' and 'camera' views.
-   * @param {'live' | 'camera'} viewName - The view to switch to.
-   */
-  function switchToView(viewName) {
-    if (viewName === 'camera') {
-      liveView.classList.add('hidden');
-      cameraView.classList.remove('hidden');
-      cameraView.classList.add('flex');
-    } else {
-      liveView.classList.remove('hidden');
-      cameraView.classList.add('hidden');
-      cameraView.classList.remove('flex');
-    }
-  }
-
-  /**
-   * Resets the camera view to its initial state.
-   */
-  function resetCameraView() {
-    videoFeed.classList.remove('hidden');
-    capturedImage.classList.add('hidden');
-    captureBtn.classList.remove('hidden');
-    promptArea.classList.add('hidden');
-    geminiResponse.classList.add('hidden');
-    loadingIndicator.classList.add('hidden');
-    promptInput.value = '';
-    capturedImage.src = '';
-    imageBase64 = null;
-  }
-
-  /**
-   * Displays the text response from Gemini over the image.
-   * @param {string} text - The text to display.
-   */
-  function displayGeminiResponse(text) {
-    const responseP = geminiResponse.querySelector('p');
-    responseP.textContent = text;
-    geminiResponse.classList.remove('hidden');
-  }
-
-  /**
-   * Updates the live view UI based on the `isListening` state.
-   */
-  function updateLiveUI() {
-    if (isListening) {
-      micIcon.classList.remove('hidden');
-      pauseIcon.classList.add('hidden');
-      listeningIndicator.innerHTML = '<p class="text-lg mb-8 opacity-80">Listening...</p>';
-      micBtn.classList.add('pulsing-glow');
-    } else {
-      micIcon.classList.add('hidden');
-      pauseIcon.classList.remove('hidden');
-      listeningIndicator.innerHTML = '<p class="text-lg mb-8 opacity-80">Paused</p>';
-      micBtn.classList.remove('pulsing-glow');
-    }
-  }
-
-  /**
-   * Displays a temporary message in a floating box.
-   * @param {string} message - The message to display.
-   */
-  function showMessage(message) {
-    messageBox.textContent = message;
-    messageBox.classList.remove('opacity-0');
-    setTimeout(() => {
-      messageBox.classList.add('opacity-0');
-    }, 3000);
-  }
-
-  // --- Initial State ---
-  updateLiveUI();
-
-</script>
+<!-- Message Box -->
+<div *ngIf="isMessageBoxVisible" id="message-box"
+     class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-center py-2 px-4 rounded-lg shadow-lg transition-opacity duration-300 z-50"
+     [class.opacity-0]="!isMessageBoxVisible">
+  {{ messageBoxText }}
+</div>
