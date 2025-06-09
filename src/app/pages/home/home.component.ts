@@ -9,7 +9,7 @@ import { CameraViewComponent } from '../../components/camera-view/camera-view.co
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements AfterViewInit {
-  currentView: 'live' | 'camera' = 'live';
+  currentView: 'microphone' | 'camera' = 'microphone';
   messageBoxText: string | null = null;
   isMessageBoxVisible: boolean = false;
   startCameraWithFileUpload: boolean = false;
@@ -44,9 +44,11 @@ export class HomeComponent implements AfterViewInit {
   }
 
   handleCameraViewChange(newView: 'live' | 'camera') {
-    this.currentView = newView;
     if (newView === 'live') {
+      this.currentView = 'microphone';
       this.startCameraWithFileUpload = false;
+    } else {
+      this.currentView = newView; // newView can only be 'camera' here
     }
   }
 
