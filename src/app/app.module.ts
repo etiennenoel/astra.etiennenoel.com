@@ -8,6 +8,10 @@ import { HomeComponent } from './pages/home/home.component';
 import {LayoutComponent} from './components/layout/layout.component';
 import { CameraViewComponent } from './components/camera-view/camera-view.component';
 import { MicrophoneViewComponent } from './components/microphone-view/microphone-view.component';
+import { MicrophoneComponent } from './components/microphone/microphone.component';
+import {PromptManager} from './managers/prompt.manager';
+import {AudioRecordingService} from './services/audio-recording.service';
+import {AudioVisualizerService} from './services/audio-visualizer.service';
 
 @NgModule({
   declarations: [
@@ -25,7 +29,14 @@ import { MicrophoneViewComponent } from './components/microphone-view/microphone
     FormsModule // Added this line
   ],
   providers: [
-    provideClientHydration(withEventReplay())
+    provideClientHydration(withEventReplay()),
+
+    // Managers
+    PromptManager,
+
+    // Services
+    AudioRecordingService,
+    AudioVisualizerService,
   ],
   bootstrap: [RootComponent]
 })
