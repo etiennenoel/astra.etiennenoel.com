@@ -1,20 +1,13 @@
-<!-- Live View -->
-<div *ngIf="currentView === 'live'" id="liveView" class="flex flex-col h-screen justify-between p-4 md:p-6 fade-in">
+<!-- Microphone View -->
+<div *ngIf="currentView === 'microphone'" id="microphoneView" class="flex flex-col h-screen justify-between p-4 md:p-6 fade-in">
   <!-- Header -->
   <header class="flex justify-between items-center">
     <h1 class="text-xl font-semibold">OnDevice Astra</h1>
   </header>
 
-  <!-- Main content area for Live View -->
-  <!-- The MicrophoneComponent, which includes the listening indicator, will be placed in the footer. -->
-  <!-- If a listening indicator is desired in this main area, it would need to be a separate element -->
-  <!-- or the MicrophoneComponent would need to be styled/structured to project parts differently. -->
-  <!-- For this step, the original listening indicator div is removed from here. -->
+  <!-- Main content area for Microphone View -->
   <div class="flex-grow flex flex-col items-center justify-center">
-    <!-- Listening Indicator -->
-    <div id="listening-indicator" class="text-center">
-      <p class="text-lg mb-2 opacity-80">{{ isListening ? 'Listening...' : 'Paused' }}</p> <!-- Reduced mb-8 to mb-2 as it's now grouped with button -->
-    </div>
+    <app-microphone-view [isListening]="isListening"></app-microphone-view>
   </div>
 
   <!-- Footer Controls -->
@@ -26,9 +19,18 @@
       </svg>
     </button>
 
-    <!-- Replace original micBtn and its associated listening indicator with app-microphone -->
-    <!-- The app-microphone component template includes both the indicator and the button -->
-    <app-microphone [isListening]="isListening" (toggleListen)="handleToggleListen()"></app-microphone>
+    <button id="micBtn" (click)="handleToggleListen()"
+            class="rounded-full p-6 transition-transform duration-200 ease-in-out hover:scale-110 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
+            [class.bg-white]="isListening" [class.text-blue-600]="isListening"
+            [class.bg-red-500]="!isListening" [class.text-white]="!isListening"
+            [class.pulsing-glow]="isListening">
+      <svg *ngIf="!isListening" id="micIcon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm5 4a1 1 0 11-2 0V4a1 1 0 112 0v4zM3 9a1 1 0 011-1h1.172a4 4 0 013.998 4.223l.135.811a4.002 4.002 0 01-3.182 3.965A4.002 4.002 0 014.172 15H4a1 1 0 110-2h.172a2 2 0 001.995-2.223l-.135-.81a2 2 0 00-1.995-1.744H4a1 1 0 01-1-1zm12.172 2.223a4 4 0 01-3.998-4.223H15a1 1 0 110 2h-.172a2 2 0 00-1.995 2.223l.135.81a2 2 0 001.995 1.744H16a1 1 0 110 2h-.828a4.002 4.002 0 01-3.998-3.777l-.135-.811A4 4 0 0111.828 9H13a1 1 0 110 2h-.172z" clip-rule="evenodd" />
+      </svg>
+      <svg *ngIf="isListening" id="pauseIcon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+      </svg>
+    </button>
 
     <button id="addFileBtn" (click)="triggerOrRequestFileUpload()" class="icon-btn rounded-full p-4 transition-transform duration-200 ease-in-out hover:scale-110">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">

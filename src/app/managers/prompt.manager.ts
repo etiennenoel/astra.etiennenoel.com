@@ -5,10 +5,12 @@ import {Injectable} from '@angular/core';
 })
 export class PromptManager {
 
+  // @ts-expect-error
   private languageModel!: LanguageModel;
 
   constructor() {
-    LanguageModel.create({}).then(languageModel => {
+    // @ts-expect-error
+    LanguageModel.create({}).then((languageModel: LanguageModel) => {
       this.languageModel = languageModel;
     });
   }
