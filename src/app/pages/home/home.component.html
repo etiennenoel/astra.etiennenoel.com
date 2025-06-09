@@ -24,10 +24,10 @@
             [class.bg-white]="isListening" [class.text-blue-600]="isListening"
             [class.bg-red-500]="!isListening" [class.text-white]="!isListening"
             [class.pulsing-glow]="isListening">
-      <svg *ngIf="isListening" id="micIcon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
+      <svg *ngIf="!isListening" id="micIcon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm5 4a1 1 0 11-2 0V4a1 1 0 112 0v4zM3 9a1 1 0 011-1h1.172a4 4 0 013.998 4.223l.135.811a4.002 4.002 0 01-3.182 3.965A4.002 4.002 0 014.172 15H4a1 1 0 110-2h.172a2 2 0 001.995-2.223l-.135-.81a2 2 0 00-1.995-1.744H4a1 1 0 01-1-1zm12.172 2.223a4 4 0 01-3.998-4.223H15a1 1 0 110 2h-.172a2 2 0 00-1.995 2.223l.135.81a2 2 0 001.995 1.744H16a1 1 0 110 2h-.828a4.002 4.002 0 01-3.998-3.777l-.135-.811A4 4 0 0111.828 9H13a1 1 0 110 2h-.172z" clip-rule="evenodd" />
       </svg>
-      <svg *ngIf="!isListening" id="pauseIcon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
+      <svg *ngIf="isListening" id="pauseIcon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
       </svg>
     </button>

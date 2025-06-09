@@ -15,7 +15,7 @@ export class HomeComponent implements AfterViewInit {
   startCameraWithFileUpload: boolean = false;
 
   // New property for MicrophoneComponent
-  isListening: boolean = true;
+  isListening: boolean = false;
 
   @ViewChild(CameraViewComponent) cameraViewInstance!: CameraViewComponent;
 
