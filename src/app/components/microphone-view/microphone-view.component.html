@@ -1,3 +1,13 @@
 <div id="listening-indicator" class="flex-grow flex flex-col items-center justify-center">
-  <p class="text-lg mb-2 opacity-80">{{ isListening ? 'Listening...' : 'Paused' }}</p>
+    <p class="text-lg mb-2 opacity-80">{{ isListening ? 'Listening...' : 'Paused' }}</p>
+
+    <canvas class="visualizer d-block rounded-pill mb-3" height="40px" #canvasElement></canvas>
+
+    @if(transcribedText) {
+        <p class="text-sm">You: {{ transcribedText }}</p>
+    }
+
+    @if(agentResponseText) {
+        <p class="text-sm">Agent: {{ agentResponseText }}</p>
+    }
 </div>

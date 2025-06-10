@@ -1,5 +1,8 @@
-import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import {Component, ViewChild, AfterViewInit, Inject} from '@angular/core';
 import { CameraViewComponent } from '../../components/camera-view/camera-view.component';
+import {BaseComponent} from '../../components/base/base.component';
+import {DOCUMENT} from '@angular/common';
+import {EventStore} from '../../stores/event.store';
 // MicrophoneComponent is not needed for ViewChild access if interaction is only through Input/Output
 
 @Component({
@@ -8,7 +11,7 @@ import { CameraViewComponent } from '../../components/camera-view/camera-view.co
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements AfterViewInit {
+export class HomeComponent extends BaseComponent {
   currentView: 'microphone' | 'camera' = 'microphone';
   messageBoxText: string | null = null;
   isMessageBoxVisible: boolean = false;
@@ -19,21 +22,20 @@ export class HomeComponent implements AfterViewInit {
 
   @ViewChild(CameraViewComponent) cameraViewInstance!: CameraViewComponent;
 
-  constructor() {}
-
-  ngAfterViewInit() {
-    // console.log('HomeComponent AfterViewInit: ViewChild elements are now available.');
+  constructor(
+    @Inject(DOCUMENT) document: Document,
+    private readonly eventStore: EventStore,
+  ) {
+    super(document);
   }
 
-  // --- Event Handlers for Template ---
-
-  // toggleListen() is REMOVED
-
-  // New method to handle event from MicrophoneComponent
   handleToggleListen() {
     this.isListening = !this.isListening;
-    // Any other logic that needs to happen when listening state changes can go here.
-    // For example, if other parts of HomeComponent need to react to isListening changes.
+    this.eventStore.recordingStatus.next(this.isListening);
+
+    if(this.isListening) {
+      this.showMessage("Press pause for the transcription to start.");
+    }
   }
 
   // --- Camera Interaction ---

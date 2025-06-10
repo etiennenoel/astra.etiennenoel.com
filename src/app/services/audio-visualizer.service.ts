@@ -24,8 +24,8 @@ export class AudioVisualizerService {
 
     const WIDTH = canvas.width ;
     const HEIGHT = canvas.height;
-    canvasCtx.fillStyle = "rgb(237,237,237)";
-    canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+    // canvasCtx.fillStyle = "rgba(0, 0,0, 0.0)";
+    // canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
 
     canvasCtx.lineWidth = 2;
     canvasCtx.strokeStyle = "rgb(110,179,255)";
@@ -69,8 +69,10 @@ export class AudioVisualizerService {
 
     this.analyser.getByteTimeDomainData(this.dataArray);
 
-    canvasCtx.fillStyle = "rgb(237,237,237)";
-    canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+    canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+
+    // canvasCtx.fillStyle = "rgba(0, 0,0, 0.0)";
+    // canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
 
     canvasCtx.lineWidth = 2;
     canvasCtx.strokeStyle = "rgb(110,179,255)";

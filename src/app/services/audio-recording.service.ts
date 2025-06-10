@@ -1,4 +1,5 @@
-import {ElementRef, Injectable} from '@angular/core';
+import {ElementRef, Inject, Injectable, PLATFORM_ID} from '@angular/core';
+import {isPlatformServer} from "@angular/common";
 
 @Injectable()
 export class AudioRecordingService {
