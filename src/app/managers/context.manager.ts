@@ -3,6 +3,7 @@ import {EventStore} from '../stores/event.store';
 import {AudioRecordingService} from '../services/audio-recording.service';
 import {AudioVisualizerService} from '../services/audio-visualizer.service';
 import {PromptManager} from './prompt.manager';
+import {CameraRecordingService} from '../services/camera-recording.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +14,12 @@ export class ContextManager {
 
   capturingContext: boolean = false;
 
+
   constructor(
     private readonly eventStore: EventStore,
     private readonly audioRecordingService: AudioRecordingService,
     private readonly audioVisualizerService: AudioVisualizerService,
+    private readonly cameraRecordingService: CameraRecordingService,
     private readonly promptManager: PromptManager,
     ) {
 
@@ -56,7 +59,14 @@ export class ContextManager {
 
     this.eventStore.isProcessing.next(true);
     this.capturingContext = true;
-    // Start by transcribing the audio.
+
+    // Capture the live image if any
+    if(this.cameraRecordingService.isStreaming()) {
+      const image = this.cameraRecordingService.captureFrame();
+      console.log(image);
+    }
+
+    // Audio transcription of what we have recorded so far
     const audioBlob = await this.audioRecordingService.stopRecording();
 
     const transcriptionStream = await this.promptManager.transcribe(audioBlob);

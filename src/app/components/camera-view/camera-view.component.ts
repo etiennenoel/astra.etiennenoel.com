@@ -42,7 +42,7 @@ export class CameraViewComponent implements AfterViewInit, OnDestroy {
       this.messageSubscription.unsubscribe();
     }
     // Ensure camera is stopped when component is destroyed
-    this.cameraRecordingService.stopCamera(this.videoFeed?.nativeElement);
+    this.cameraRecordingService.stopCamera();
   }
 
   async startCamera() {
@@ -64,7 +64,7 @@ export class CameraViewComponent implements AfterViewInit, OnDestroy {
 
   private stopCameraInternal() {
     console.log('CameraView: stopCameraInternal called');
-    this.cameraRecordingService.stopCamera(this.videoFeed?.nativeElement);
+    this.cameraRecordingService.stopCamera();
   }
 
   stopCamera() {
@@ -73,26 +73,26 @@ export class CameraViewComponent implements AfterViewInit, OnDestroy {
     this.viewChange.emit('live');
   }
 
-  captureFrame() {
-    if (!this.videoFeed || !this.videoFeed.nativeElement || !this.canvas || !this.canvas.nativeElement) {
-        this.message.emit('Camera feed or canvas not ready.');
-        return;
-    }
-
-    this.imageBase64 = this.cameraRecordingService.captureFrame(this.canvas.nativeElement, this.videoFeed.nativeElement);
-
-    if (this.imageBase64) {
-      if (this.capturedImage && this.capturedImage.nativeElement) {
-        this.capturedImage.nativeElement.src = this.imageBase64;
-      }
-      this.showVideoFeed = false;
-      this.showCapturedImage = true;
-      this.geminiResponseText = null;
-    } else {
-        // Message should be emitted by service if capture failed
-        // this.message.emit('Could not capture frame.'); // Or rely on service message
-    }
-  }
+  // captureFrame() {
+  //   if (!this.videoFeed || !this.videoFeed.nativeElement || !this.canvas || !this.canvas.nativeElement) {
+  //       this.message.emit('Camera feed or canvas not ready.');
+  //       return;
+  //   }
+  //
+  //   this.imageBase64 = this.cameraRecordingService.captureFrame();
+  //
+  //   if (this.imageBase64) {
+  //     if (this.capturedImage && this.capturedImage.nativeElement) {
+  //       this.capturedImage.nativeElement.src = this.imageBase64;
+  //     }
+  //     this.showVideoFeed = false;
+  //     this.showCapturedImage = true;
+  //     this.geminiResponseText = null;
+  //   } else {
+  //       // Message should be emitted by service if capture failed
+  //       // this.message.emit('Could not capture frame.'); // Or rely on service message
+  //   }
+  // }
 
   resetCameraView() {
     this.showVideoFeed = true;

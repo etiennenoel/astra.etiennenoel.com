@@ -7,9 +7,12 @@ export class CameraRecordingService {
   private stream: MediaStream | null = null;
   public messageEmitter: EventEmitter<string> = new EventEmitter<string>();
 
+  videoElement?: HTMLVideoElement;
+
   constructor() {}
 
   async startCamera(videoElement: HTMLVideoElement): Promise<void> {
+    this.videoElement = videoElement;
     this.resetStream();
     try {
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -35,27 +38,26 @@ export class CameraRecordingService {
     }
   }
 
-  stopCamera(videoElement?: HTMLVideoElement): void {
+  stopCamera(): void {
     this.resetStream();
-    if (videoElement) {
-      videoElement.srcObject = null;
+    if (this.videoElement) {
+      this.videoElement.srcObject = null;
     }
   }
 
-  captureFrame(canvasElement: HTMLCanvasElement, videoElement: HTMLVideoElement): string | null {
-    if (!videoElement.srcObject || !canvasElement) {
+  captureFrame(): string | null {
+    if (!this.videoElement) {
       this.messageEmitter.emit('Video feed or canvas not ready for capture.');
       return null;
     }
 
-    const video = videoElement;
-    const canvas = canvasElement;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    const canvas = document.createElement('canvas');
+    canvas.width = this.videoElement.videoWidth;
+    canvas.height = this.videoElement.videoHeight;
     const context = canvas.getContext('2d');
 
     if (context) {
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      context.drawImage(this.videoElement, 0, 0, canvas.width, canvas.height);
       return canvas.toDataURL('image/png');
     } else {
       this.messageEmitter.emit('Could not get canvas context for capture.');
