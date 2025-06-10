@@ -15,6 +15,7 @@ import { CameraRecordingService } from './services/camera-recording.service';
 import {FooterComponent} from './components/footer/footer.component';
 import {ActionButtonComponent} from './components/action-button/action-button.component';
 import {ContextManager} from './managers/context.manager';
+import { MicrophoneVisualizerComponent } from './components/microphone-visualizer/microphone-visualizer.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import {ContextManager} from './managers/context.manager';
     FooterComponent,
     HomeComponent,
     CameraViewComponent,
-    MicrophoneViewComponent
+    MicrophoneViewComponent,
+    MicrophoneVisualizerComponent
   ],
   imports: [
     BrowserModule,
