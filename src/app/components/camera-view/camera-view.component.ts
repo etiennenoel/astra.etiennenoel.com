@@ -1,4 +1,6 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
+import { CameraRecordingService } from '../../services/camera-recording.service'; // Import the service
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-camera-view',
@@ -6,15 +8,13 @@ import { Component, ElementRef, ViewChild, AfterViewInit, Input, Output, EventEm
   templateUrl: './camera-view.component.html',
   styleUrls: ['./camera-view.component.scss']
 })
-export class CameraViewComponent implements AfterViewInit, OnChanges {
+export class CameraViewComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() currentView: 'live' | 'camera' = 'live';
   @Input() startWithFileUpload: boolean = false;
   @Output() viewChange = new EventEmitter<'live' | 'camera'>();
   @Output() message = new EventEmitter<string>();
   @Output() fileUploadRequested = new EventEmitter<void>();
 
-
-  // Properties from Step 1
   imageBase64: string | null = null;
   geminiResponseText: string | null = null;
   isLoadingGemini: boolean = false;
@@ -26,24 +26,26 @@ export class CameraViewComponent implements AfterViewInit, OnChanges {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   @ViewChild('promptInputElem') promptInputElem!: ElementRef<HTMLInputElement>;
 
-  // New properties for method logic
-  stream: MediaStream | null = null;
-  showVideoFeed: boolean = true; // Controls visibility of video element in camera view
-  showCapturedImage: boolean = false; // Controls visibility of image element in camera view
-  showCaptureButton: boolean = true; // Controls visibility of capture button in camera view
-  showPromptArea: boolean = false; // Controls visibility of prompt input area in camera view
+  showVideoFeed: boolean = true;
+  showCapturedImage: boolean = false;
+  showCaptureButton: boolean = true;
+  showPromptArea: boolean = false;
 
-  constructor() {}
+  private messageSubscription: Subscription | undefined;
+
+  constructor(private cameraRecordingService: CameraRecordingService) {} // Inject the service
 
   ngAfterViewInit() {
+    this.messageSubscription = this.cameraRecordingService.messageEmitter.subscribe(
+      (msg: string) => this.message.emit(msg)
+    );
+
     if (this.currentView === 'camera' && !this.startWithFileUpload) {
       this.startCamera();
     }
     if (this.startWithFileUpload) {
-      // Delay openFileDialog slightly to ensure view is initialized,
-      // especially if currentView is also changing.
       setTimeout(() => {
-        if (this.currentView === 'camera') { // Double check view before opening
+        if (this.currentView === 'camera') {
             this.openFileDialog();
         }
       }, 0);
@@ -57,57 +59,48 @@ export class CameraViewComponent implements AfterViewInit, OnChanges {
       }
     }
     if (changes['currentView']) {
-        if (changes['currentView'].currentValue === 'camera' && !this.stream) {
-            // If view changes to 'camera'
+        if (changes['currentView'].currentValue === 'camera' && !this.cameraRecordingService.isStreaming()) {
             if (this.startWithFileUpload && this.fileInput?.nativeElement?.files?.length === 0) {
-                // If we intended to start with file upload but no file was chosen (e.g. dialog cancelled)
-                // and then user perhaps navigated away and back to camera view.
-                // Or if the initial startWithFileUpload flag was set.
-                // We will let openFileDialog be called by the startWithFileUpload logic.
-                // If it's already been called and cancelled, we might need to start camera.
-                // Let's ensure openFileDialog is attempted if startWithFileUpload is true.
-                if(!changes['startWithFileUpload']?.currentValue) { // if startWithFileUpload wasn't the trigger
+                if(!changes['startWithFileUpload']?.currentValue) {
                     this.startCamera();
                 }
             } else if (!this.startWithFileUpload) {
                 this.startCamera();
             }
-        } else if (changes['currentView'].currentValue === 'live' && this.stream) {
+        } else if (changes['currentView'].currentValue === 'live' && this.cameraRecordingService.isStreaming()) {
             this.stopCameraInternal();
         }
     }
   }
 
-  // --- Core Functions ---
+  ngOnDestroy() {
+    if (this.messageSubscription) {
+      this.messageSubscription.unsubscribe();
+    }
+    // Ensure camera is stopped when component is destroyed
+    this.cameraRecordingService.stopCamera(this.videoFeed?.nativeElement);
+  }
 
   async startCamera() {
     console.log('CameraView: startCamera called');
     this.resetCameraView();
     try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        if (this.videoFeed && this.videoFeed.nativeElement) {
-          this.videoFeed.nativeElement.srcObject = this.stream;
-        }
+      if (this.videoFeed && this.videoFeed.nativeElement) {
+        await this.cameraRecordingService.startCamera(this.videoFeed.nativeElement);
       } else {
-        this.message.emit('Camera not supported on this device.');
+        this.message.emit('Video feed element not available.');
       }
     } catch (error) {
-      console.error("Error accessing camera: ", error);
-      this.message.emit('Could not access the camera. Please check permissions.');
-      this.viewChange.emit('live');
+      // Error handling is now primarily within the service, which emits messages.
+      // The service re-throws the error, so we can catch it here if specific component actions are needed.
+      console.error("CameraView: Error starting camera via service: ", error);
+      this.viewChange.emit('live'); // Switch view on critical error
     }
   }
 
   private stopCameraInternal() {
     console.log('CameraView: stopCameraInternal called');
-    if (this.stream) {
-      this.stream.getTracks().forEach(track => track.stop());
-      this.stream = null;
-    }
-    if (this.videoFeed && this.videoFeed.nativeElement) {
-      this.videoFeed.nativeElement.srcObject = null;
-    }
+    this.cameraRecordingService.stopCamera(this.videoFeed?.nativeElement);
   }
 
   stopCamera() {
@@ -121,25 +114,21 @@ export class CameraViewComponent implements AfterViewInit, OnChanges {
         this.message.emit('Camera feed or canvas not ready.');
         return;
     }
-    const video = this.videoFeed.nativeElement;
-    const canvas = this.canvas.nativeElement;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const context = canvas.getContext('2d');
-    if (context) {
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      this.imageBase64 = canvas.toDataURL('image/png');
+
+    this.imageBase64 = this.cameraRecordingService.captureFrame(this.canvas.nativeElement, this.videoFeed.nativeElement);
+
+    if (this.imageBase64) {
       if (this.capturedImage && this.capturedImage.nativeElement) {
         this.capturedImage.nativeElement.src = this.imageBase64;
       }
-
       this.showVideoFeed = false;
       this.showCapturedImage = true;
       this.showCaptureButton = false;
       this.showPromptArea = true;
       this.geminiResponseText = null;
     } else {
-        this.message.emit('Could not get canvas context.');
+        // Message should be emitted by service if capture failed
+        // this.message.emit('Could not capture frame.'); // Or rely on service message
     }
   }
 
@@ -161,12 +150,11 @@ export class CameraViewComponent implements AfterViewInit, OnChanges {
       };
       reader.readAsDataURL(file);
     } else {
-      // No file selected, or dialog cancelled.
-      if (!this.stream) { // If camera wasn't active (e.g. started directly with file upload)
+      if (!this.cameraRecordingService.isStreaming()) {
           this.viewChange.emit('live');
       }
     }
-    this.fileUploadRequested.emit(); // Reset the flag in parent
+    this.fileUploadRequested.emit();
   }
 
   async callGeminiAPI() {
@@ -186,7 +174,7 @@ export class CameraViewComponent implements AfterViewInit, OnChanges {
         parts: [{ text: prompt }, { inlineData: { mimeType: "image/png", data: pureBase64 } }]
       }],
     };
-    const apiKey = "";
+    const apiKey = ""; // Consider moving to environment variable or config
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     try {
@@ -248,10 +236,10 @@ export class CameraViewComponent implements AfterViewInit, OnChanges {
   public openFileDialog() {
     console.log('CameraView: openFileDialog called');
     if (this.fileInput && this.fileInput.nativeElement) {
-      this.stopCameraInternal(); // Stop camera if it's running before opening file dialog
-      this.resetCameraView(); // Reset view to hide video feed elements
-      this.showVideoFeed = false; // Explicitly hide video feed
-      this.showCapturedImage = false; // Ensure no old image is shown
+      this.cameraRecordingService.stopCamera(this.videoFeed?.nativeElement); // Use service
+      this.resetCameraView();
+      this.showVideoFeed = false;
+      this.showCapturedImage = false;
       this.fileInput.nativeElement.click();
     } else {
         this.message.emit('File input is not available in camera view.');
