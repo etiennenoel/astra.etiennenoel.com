@@ -1,10 +1,9 @@
 .view-container {
   border-radius: 50px;
-  background: linear-gradient(135deg, #4285F4, #9B72CB, #D96570, #F2A600);
+  //background: linear-gradient(135deg, #4285F4, #9B72CB, #D96570, #F2A600);
   background-size: 200% 200%;
   animation: gradient-animation 10s ease infinite;
-  margin-top:50px;
-  height: calc(100vh - 250px);
+  height: calc(100vh - 350px);
 }
 
 
@@ -46,7 +45,7 @@
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 .message-box-custom-bottom {
-  bottom: 6rem; /* Equivalent to Tailwind's bottom-24 */
+  bottom: 2rem; /* Equivalent to Tailwind's bottom-24 */
 }
 
 .hover-scale-110:hover {
