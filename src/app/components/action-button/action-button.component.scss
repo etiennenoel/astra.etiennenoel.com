@@ -1,0 +1,16 @@
+button {
+  background-color: #222227;
+  height: 40px;
+  font-size: 24px;
+  width: 70px;
+
+  border-radius: 40px;
+
+  &.bg-white {
+    color: black;
+  }
+
+  &:disabled {
+    color: #808080;
+  }
+}

@@ -1,6 +1,8 @@
 import {ElementRef, Injectable} from '@angular/core';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AudioVisualizerService {
   private canvasElement?: ElementRef;
 

@@ -1,8 +1,10 @@
-import {Component, ViewChild, AfterViewInit, Inject} from '@angular/core';
-import { CameraViewComponent } from '../../components/camera-view/camera-view.component';
+import {Component, ViewChild, AfterViewInit, Inject, OnInit} from '@angular/core';
+import {CameraViewComponent} from '../../components/camera-view/camera-view.component';
 import {BaseComponent} from '../../components/base/base.component';
 import {DOCUMENT} from '@angular/common';
 import {EventStore} from '../../stores/event.store';
+import {ContextManager} from '../../managers/context.manager';
+
 // MicrophoneComponent is not needed for ViewChild access if interaction is only through Input/Output
 
 @Component({
@@ -11,31 +13,48 @@ import {EventStore} from '../../stores/event.store';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent extends BaseComponent {
+export class HomeComponent extends BaseComponent implements OnInit {
   currentView: 'microphone' | 'camera' = 'microphone';
   messageBoxText: string | null = null;
   isMessageBoxVisible: boolean = false;
   startCameraWithFileUpload: boolean = false;
 
   // New property for MicrophoneComponent
-  isListening: boolean = false;
+  isPaused: boolean = false;
 
   @ViewChild(CameraViewComponent) cameraViewInstance!: CameraViewComponent;
 
   constructor(
     @Inject(DOCUMENT) document: Document,
     private readonly eventStore: EventStore,
+    private readonly contextManager: ContextManager,
   ) {
     super(document);
   }
 
-  handleToggleListen() {
-    this.isListening = !this.isListening;
-    this.eventStore.recordingStatus.next(this.isListening);
+  override ngOnInit() {
+    super.ngOnInit();
 
-    if(this.isListening) {
-      this.showMessage("Press pause for the transcription to start.");
-    }
+    this.subscriptions.push(this.eventStore.transcriptionAvailable.subscribe(value => {
+
+    }));
+
+    this.subscriptions.push(this.eventStore.agentResponseAvailable.subscribe(value => {
+
+    }));
+
+    this.subscriptions.push(this.eventStore.isPaused.subscribe(value => {
+      if (value === undefined) {
+        return;
+      }
+      this.isPaused = value;
+
+      if(this.isPaused){
+
+      } else {
+        this.showMessage("Press the circle to process content.");
+      }
+    }))
   }
 
   // --- Camera Interaction ---
@@ -59,7 +78,7 @@ export class HomeComponent extends BaseComponent {
   }
 
   handleFileUploadInCameraRequest() {
-      this.startCameraWithFileUpload = false;
+    this.startCameraWithFileUpload = false;
   }
 
   triggerOrRequestFileUpload() {

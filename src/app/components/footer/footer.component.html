@@ -1,0 +1,7 @@
+<div class="d-flex align-items-center justify-content-center gap-3">
+  <app-action-button [icon]="'bi-camera-video'" [color]="isCameraOn ? 'white':'transparent'" [disabled]="isPaused" (click)="toggleCamera()"></app-action-button>
+<!--  <app-action-button [icon]="'bi-window-plus'" [disabled]="isPaused"></app-action-button>-->
+  <app-action-button [icon]="'bi-circle'" (click)="captureContext()"></app-action-button>
+  <app-action-button [icon]="isPaused ? 'bi-soundwave' : 'bi-pause-fill'" (click)="togglePause()"></app-action-button>
+  <app-action-button [icon]="'bi-x'" color="red"></app-action-button>
+</div>

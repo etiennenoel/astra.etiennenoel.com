@@ -1,7 +1,9 @@
 import {ElementRef, Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {isPlatformServer} from "@angular/common";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class AudioRecordingService {
 
   private canvasElement?: ElementRef;
