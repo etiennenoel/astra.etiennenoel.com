@@ -45,7 +45,7 @@ export class CameraRecordingService {
     }
   }
 
-  captureFrame(): string | null {
+  captureFrame(): HTMLCanvasElement | null {
     if (!this.videoElement) {
       this.messageEmitter.emit('Video feed or canvas not ready for capture.');
       return null;
@@ -58,7 +58,7 @@ export class CameraRecordingService {
 
     if (context) {
       context.drawImage(this.videoElement, 0, 0, canvas.width, canvas.height);
-      return canvas.toDataURL('image/png');
+      return canvas;
     } else {
       this.messageEmitter.emit('Could not get canvas context for capture.');
       return null;

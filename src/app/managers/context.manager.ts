@@ -61,11 +61,15 @@ export class ContextManager {
     this.capturingContext = true;
 
     // Capture the live image if any
+    let imagePromptContent;
     if(this.cameraRecordingService.isStreaming()) {
       const image = this.cameraRecordingService.captureFrame();
-      console.log(image);
-    }
 
+      if(image !== null) {
+        imagePromptContent = await createImageBitmap(image);
+      }
+    }
+    
     // Audio transcription of what we have recorded so far
     const audioBlob = await this.audioRecordingService.stopRecording();
 
