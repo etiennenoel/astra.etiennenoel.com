@@ -1,4 +1,5 @@
-import {Injectable} from '@angular/core';
+import {Injectable, Inject, PLATFORM_ID} from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {EventStore} from '../stores/event.store';
 import {AudioRecordingService} from '../services/audio-recording.service';
 import {AudioVisualizerService} from '../services/audio-visualizer.service';
@@ -11,18 +12,45 @@ import {CameraRecordingService} from '../services/camera-recording.service';
 export class ContextManager {
 
   stream?: MediaStream;
-
+  private speechSynthesis: SpeechSynthesis | null = null;
+  private selectedVoice: SpeechSynthesisVoice | null = null;
   capturingContext: boolean = false;
 
 
   constructor(
+    @Inject(DOCUMENT) private document: Document,
+    @Inject(PLATFORM_ID) private platformId: Object,
     private readonly eventStore: EventStore,
     private readonly audioRecordingService: AudioRecordingService,
     private readonly audioVisualizerService: AudioVisualizerService,
     private readonly cameraRecordingService: CameraRecordingService,
     private readonly promptManager: PromptManager,
     ) {
+    if (isPlatformBrowser(this.platformId) && this.document.defaultView) {
+      this.speechSynthesis = this.document.defaultView.speechSynthesis;
+      if (this.speechSynthesis) {
+        this.speechSynthesis.onvoiceschanged = () => {
+          const voices = this.speechSynthesis!.getVoices();
+          const britishVoices = voices.filter(voice => voice.lang === 'en-GB');
 
+          if (britishVoices.length > 0) {
+            this.selectedVoice = britishVoices.find(voice => /female|woman/i.test(voice.name)) || null;
+            if (this.selectedVoice) {
+              console.log(`Found female British voice: ${this.selectedVoice.name}`);
+            } else {
+              // Fallback to the first available British voice if no female is found
+              this.selectedVoice = britishVoices[0];
+              console.warn(`No female British voice found. Using first available en-GB voice: ${this.selectedVoice.name}`);
+            }
+          } else {
+            this.selectedVoice = null;
+            console.warn('No British English (en-GB) voices found. Using default voice.');
+          }
+        };
+        // Trigger loading voices if they haven't been loaded yet for some browsers
+        this.speechSynthesis.getVoices();
+      }
+    }
     this.eventStore.captureContext.subscribe(value => {
       if (value) {
         this.captureContext();
@@ -83,8 +111,24 @@ export class ContextManager {
 
     const agentResponseStream = this.promptManager.promptStreaming(transcribedText, imagePromptContent);
 
+    if (this.speechSynthesis) {
+      this.speechSynthesis.cancel();
+    }
     for await (const chunk of agentResponseStream) {
       this.eventStore.agentResponseAvailable.next(chunk);
+      if (this.speechSynthesis) {
+        try {
+          const utterance = new SpeechSynthesisUtterance(chunk);
+          if (this.selectedVoice) {
+            utterance.voice = this.selectedVoice;
+          }
+          utterance.rate = 1.5; // Adjust rate as desired (1.0 is default)
+          utterance.pitch = 1;
+          this.speechSynthesis.speak(utterance);
+        } catch (error) {
+          console.error('Speech synthesis error:', error);
+        }
+      }
     }
 
     // Yield again
