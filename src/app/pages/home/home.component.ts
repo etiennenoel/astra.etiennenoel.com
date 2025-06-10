@@ -17,7 +17,6 @@ export class HomeComponent extends BaseComponent implements OnInit {
   currentView: 'microphone' | 'camera' = 'microphone';
   messageBoxText: string | null = null;
   isMessageBoxVisible: boolean = false;
-  startCameraWithFileUpload: boolean = false;
 
   // New property for MicrophoneComponent
   isPaused: boolean = false;
@@ -68,37 +67,8 @@ export class HomeComponent extends BaseComponent implements OnInit {
     }));
   }
 
-  // --- Camera Interaction ---
-
-  openCameraView() {
-    this.startCameraWithFileUpload = false;
-    this.currentView = 'camera';
-  }
-
-  handleCameraViewChange(newView: 'live' | 'camera') {
-    if (newView === 'live') {
-      this.currentView = 'microphone';
-      this.startCameraWithFileUpload = false;
-    } else {
-      this.currentView = newView; // newView can only be 'camera' here
-    }
-  }
-
   handleCameraMessage(message: string) {
     this.showMessage(message);
-  }
-
-  handleFileUploadInCameraRequest() {
-    this.startCameraWithFileUpload = false;
-  }
-
-  triggerOrRequestFileUpload() {
-    if (this.currentView === 'camera' && this.cameraViewInstance) {
-      this.cameraViewInstance.openFileDialog();
-    } else {
-      this.startCameraWithFileUpload = true;
-      this.currentView = 'camera';
-    }
   }
 
   // --- UI Helper Functions ---

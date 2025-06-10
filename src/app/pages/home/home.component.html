@@ -12,11 +12,7 @@
     <!-- App Camera View Component -->
     <app-camera-view
       *ngIf="currentView === 'camera'"
-      [currentView]="currentView"
-      [startWithFileUpload]="startCameraWithFileUpload"
-      (viewChange)="handleCameraViewChange($event)"
-      (message)="handleCameraMessage($event)"
-      (fileUploadRequested)="handleFileUploadInCameraRequest()">
+      (message)="handleCameraMessage($event)">
     </app-camera-view>
 
     <!-- Message Box -->
