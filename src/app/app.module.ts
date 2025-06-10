@@ -11,13 +11,17 @@ import { MicrophoneViewComponent } from './components/microphone-view/microphone
 import {PromptManager} from './managers/prompt.manager';
 import {AudioRecordingService} from './services/audio-recording.service';
 import {AudioVisualizerService} from './services/audio-visualizer.service';
+import {FooterComponent} from './components/footer/footer.component';
+import {ActionButtonComponent} from './components/action-button/action-button.component';
+import {ContextManager} from './managers/context.manager';
 
 @NgModule({
   declarations: [
     LayoutComponent,
     RootComponent,
 
-
+    ActionButtonComponent,
+    FooterComponent,
     HomeComponent,
     CameraViewComponent,
     MicrophoneViewComponent
@@ -31,6 +35,7 @@ import {AudioVisualizerService} from './services/audio-visualizer.service';
     provideClientHydration(withEventReplay()),
 
     // Managers
+    ContextManager,
     PromptManager,
 
     // Services
