@@ -1,4 +1,5 @@
-import {Injectable} from '@angular/core';
+import {Injectable, Inject, PLATFORM_ID} from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {EventStore} from '../stores/event.store';
 import {AudioRecordingService} from '../services/audio-recording.service';
 import {AudioVisualizerService} from '../services/audio-visualizer.service';
@@ -11,18 +12,34 @@ import {CameraRecordingService} from '../services/camera-recording.service';
 export class ContextManager {
 
   stream?: MediaStream;
-  speechSynthesis: SpeechSynthesis;
+  private speechSynthesis: SpeechSynthesis | null = null;
+  private selectedVoice: SpeechSynthesisVoice | null = null;
   capturingContext: boolean = false;
 
 
   constructor(
+    @Inject(DOCUMENT) private document: Document,
+    @Inject(PLATFORM_ID) private platformId: Object,
     private readonly eventStore: EventStore,
     private readonly audioRecordingService: AudioRecordingService,
     private readonly audioVisualizerService: AudioVisualizerService,
     private readonly cameraRecordingService: CameraRecordingService,
     private readonly promptManager: PromptManager,
     ) {
-    this.speechSynthesis = window.speechSynthesis;
+    if (isPlatformBrowser(this.platformId) && this.document.defaultView) {
+      this.speechSynthesis = this.document.defaultView.speechSynthesis;
+      if (this.speechSynthesis) {
+        this.speechSynthesis.onvoiceschanged = () => {
+          const voices = this.speechSynthesis!.getVoices();
+          this.selectedVoice = voices.find(voice => voice.lang === 'en-GB') || null;
+          if (!this.selectedVoice) {
+            console.warn('No British English (en-GB) voice found. Using default voice.');
+          }
+        };
+        // Trigger loading voices if they haven't been loaded yet for some browsers
+        this.speechSynthesis.getVoices();
+      }
+    }
     this.eventStore.captureContext.subscribe(value => {
       if (value) {
         this.captureContext();
@@ -83,14 +100,22 @@ export class ContextManager {
 
     const agentResponseStream = this.promptManager.promptStreaming(transcribedText, imagePromptContent);
 
-    this.speechSynthesis.cancel();
+    if (this.speechSynthesis) {
+      this.speechSynthesis.cancel();
+    }
     for await (const chunk of agentResponseStream) {
       this.eventStore.agentResponseAvailable.next(chunk);
-      try {
-        const utterance = new SpeechSynthesisUtterance(chunk);
-        this.speechSynthesis.speak(utterance);
-      } catch (error) {
-        console.error("Error speaking utterance:", error);
+      if (this.speechSynthesis) {
+        try {
+          const utterance = new SpeechSynthesisUtterance(chunk);
+          if (this.selectedVoice) {
+            utterance.voice = this.selectedVoice;
+          }
+          utterance.rate = 1.5; // Adjust rate as desired (1.0 is default)
+          this.speechSynthesis.speak(utterance);
+        } catch (error) {
+          console.error('Speech synthesis error:', error);
+        }
       }
     }
 
