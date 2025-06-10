@@ -48,6 +48,6 @@ export class FooterComponent implements AfterViewInit {
 
   toggleCamera() {
     this.isCameraOn = !this.isCameraOn;
-    //this.eventStore.turnOnCamera();
+    this.eventStore.isCameraOn.next(this.isCameraOn); // Dispatch the event
   }
 }

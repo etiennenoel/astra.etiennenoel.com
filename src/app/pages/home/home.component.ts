@@ -54,7 +54,18 @@ export class HomeComponent extends BaseComponent implements OnInit {
       } else {
         this.showMessage("Press the circle to process content.");
       }
-    }))
+    }));
+
+    this.subscriptions.push(this.eventStore.isCameraOn.subscribe(value => {
+      if (value === undefined) {
+        return;
+      }
+      if (value) { // If camera is on
+        this.currentView = 'camera';
+      } else { // If camera is off
+        this.currentView = 'microphone';
+      }
+    }));
   }
 
   // --- Camera Interaction ---
