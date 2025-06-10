@@ -3,5 +3,5 @@
 <!--  <app-action-button [icon]="'bi-window-plus'" [disabled]="isPaused"></app-action-button>-->
   <app-action-button [icon]="'bi-circle'" [disabled]="isPaused" (click)="captureContext()"></app-action-button>
   <app-action-button [icon]="isPaused ? 'bi-soundwave' : 'bi-pause-fill'" (click)="togglePause()"></app-action-button>
-  <app-action-button [icon]="'bi-x'" color="red"></app-action-button>
+  <app-action-button [icon]="'bi-x'" color="red" (click)="exit()"></app-action-button>
 </div>

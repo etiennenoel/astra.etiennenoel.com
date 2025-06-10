@@ -4,6 +4,7 @@ import {BaseComponent} from '../../components/base/base.component';
 import {DOCUMENT} from '@angular/common';
 import {EventStore} from '../../stores/event.store';
 import {ContextManager} from '../../managers/context.manager';
+import {PromptManager} from '../../managers/prompt.manager';
 
 // MicrophoneComponent is not needed for ViewChild access if interaction is only through Input/Output
 
@@ -27,6 +28,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
     @Inject(DOCUMENT) document: Document,
     private readonly eventStore: EventStore,
     private readonly contextManager: ContextManager,
+    private readonly promptManager: PromptManager,
   ) {
     super(document);
   }
@@ -49,8 +51,9 @@ export class HomeComponent extends BaseComponent implements OnInit {
       this.isPaused = value;
 
       if(this.isPaused){
-
+        this.currentView = 'microphone';
       } else {
+        this.promptManager.setup();
         this.showMessage("Press the circle to process content.");
       }
     }));

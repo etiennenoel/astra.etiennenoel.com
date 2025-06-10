@@ -15,19 +15,17 @@ export class PromptManager {
         if (isPlatformServer(platformId)) {
             return;
         }
+    }
 
+    async setup () {
         // @ts-expect-error
-        LanguageModel.create({
+        this.languageModel = await LanguageModel.create({
             expectedInputs: [
                 {type: "text"},
                 {type: "image"},
                 {type: "audio"},
             ]
-        }).then(
-            // @ts-expect-error
-            (languageModel: LanguageModel) => {
-                this.languageModel = languageModel;
-            });
+        })
     }
 
     promptStreaming(prompt: string, image?: ImageBitmap): ReadableStream {

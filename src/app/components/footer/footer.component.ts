@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, Inject, Input, PLATFORM_ID} from '@angular/core';
 import {EventStore} from '../../stores/event.store';
-import {isPlatformServer} from '@angular/common';
+import {DOCUMENT, isPlatformServer} from '@angular/common';
+import {BaseComponent} from '../base/base.component';
 
 @Component({
   selector: 'app-footer',
@@ -8,7 +9,7 @@ import {isPlatformServer} from '@angular/common';
   standalone: false,
   styleUrl: './footer.component.scss'
 })
-export class FooterComponent implements AfterViewInit {
+export class FooterComponent extends BaseComponent implements AfterViewInit {
 
   @Input()
   isPaused = true
@@ -18,8 +19,10 @@ export class FooterComponent implements AfterViewInit {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
+    @Inject(DOCUMENT) document: Document,
     private readonly eventStore: EventStore,
   ) {
+    super(document)
   }
 
   ngAfterViewInit(): void {
@@ -49,5 +52,9 @@ export class FooterComponent implements AfterViewInit {
   toggleCamera() {
     this.isCameraOn = !this.isCameraOn;
     this.eventStore.isCameraOn.next(this.isCameraOn); // Dispatch the event
+  }
+
+  exit() {
+    this.window?.location.reload();
   }
 }
