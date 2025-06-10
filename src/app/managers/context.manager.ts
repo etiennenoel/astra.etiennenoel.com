@@ -69,7 +69,7 @@ export class ContextManager {
         imagePromptContent = await createImageBitmap(image);
       }
     }
-    
+
     // Audio transcription of what we have recorded so far
     const audioBlob = await this.audioRecordingService.stopRecording();
 
@@ -81,7 +81,7 @@ export class ContextManager {
       transcribedText += chunk;
     }
 
-    const agentResponseStream = this.promptManager.promptStreaming(transcribedText);
+    const agentResponseStream = this.promptManager.promptStreaming(transcribedText, imagePromptContent);
 
     for await (const chunk of agentResponseStream) {
       this.eventStore.agentResponseAvailable.next(chunk);
