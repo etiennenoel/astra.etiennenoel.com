@@ -12,7 +12,7 @@ export class AudioRecordingService {
 
   chunks: any[] = []
 
-  stream: any;
+  private stream: MediaStream | null = null;
 
   chunkAvailableCallback?: (chunk: any) => void;
 
@@ -59,5 +59,9 @@ export class AudioRecordingService {
 
       self.mediaRecorder?.stop();
     })
+  }
+
+  public getStream(): MediaStream | null {
+    return this.stream;
   }
 }

@@ -1,2 +1,56 @@
-// Initially empty. Styles can be added here if needed.
-// For now, relying on Tailwind classes in the HTML.
+/* Styles from the issue description */
+:host {
+    display: block; /* Needed for :host background to apply if it's not a root component */
+    font-family: 'Inter', sans-serif; /* Assuming Inter is loaded globally */
+    background-color: #0c0a1d; /* Applying the dark background to the component host */
+    /* If this component is meant to be full-screen, consider adding height: 100%; or similar
+       depending on the overall application structure. */
+}
+
+/* Styles for the canvas, permission overlay, and start button */
+canvas#visualizer {
+    display: block;
+    width: 100%; /* Make it responsive within its container. */
+    height: 150px; /* A moderate default height, can be tuned. AudioVisualizerService sets internal resolution. */
+    /* The parent div#listening-indicator uses flexbox, so this should fit in. */
+}
+
+#permission-overlay {
+    position: absolute; /* This should overlay other content */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0,0,0,0.7); /* Semi-transparent black overlay */
+    z-index: 10; /* Ensure it's on top of other content within this component */
+    color: white;
+    text-align: center;
+    padding: 20px; /* Padding for the content inside the overlay */
+}
+
+#startButton {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: white;
+    background-image: linear-gradient(to right, #6d28d9, #d946ef); /* Tailwind purple-700 to fuchsia-500 */
+    border: none;
+    border-radius: 9999px; /* pill shape, Tailwind's rounded-full */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 25px rgba(173, 70, 239, 0.4); /* Shadow with a violet hue */
+}
+
+#startButton:hover {
+    transform: scale(1.05); /* Slight zoom effect on hover */
+    box-shadow: 0 6px 30px rgba(173, 70, 239, 0.6); /* Enhanced shadow on hover */
+}
+
+/* Tailwind classes are used in the HTML for layout (e.g., on #listening-indicator).
+   These SCSS styles are primarily for the visualizer, overlay, and button appearance
+   that might be more complex or specific than utility classes can easily provide,
+   or to ensure they match the provided design snippet. */

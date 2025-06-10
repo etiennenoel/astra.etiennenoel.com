@@ -1,11 +1,20 @@
+<!-- Permission Overlay: This will be shown first and hidden after permission -->
+<div id="permission-overlay">
+    <h1 class="text-3xl font-bold mb-4">Audio Reactive Animation</h1>
+    <p class="mb-8 max-w-md">This experience uses your microphone to create a visual animation. Please grant permission to access your audio when prompted.</p>
+    <button id="startButton">Start</button>
+</div>
+
+<!-- Main content area, including the visualizer canvas -->
 <div id="listening-indicator" class="flex-grow flex flex-col items-center justify-center">
+    <!-- The new canvas for visualization -->
+    <canvas id="visualizer"></canvas>
+
     @if(isProcessing) {
         <p class="text-lg mb-2 opacity-80">Processing...</p>
     } @else {
         <p class="text-lg mb-2 opacity-80">{{ isListening ? 'Listening...' : 'Paused' }}</p>
     }
-
-    <canvas class="visualizer d-block rounded-pill mb-3" height="40px" #canvasElement></canvas>
 
     @if(transcribedText) {
         <p class="text-sm">You: {{ transcribedText }}</p>
