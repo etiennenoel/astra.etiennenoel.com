@@ -57,11 +57,21 @@ export class PromptManager {
     }
 
     async transcribe(audioBlob: Blob): Promise<ReadableStream> {
+        // More efficient to create a new model than polluting the old session
+        // @ts-expect-error
+        const languageModel = await LanguageModel.create({
+            expectedInputs: [
+                {type: "text"},
+                {type: "image"},
+                {type: "audio"},
+            ]
+        });
+
         //this.audioSrc = URL.createObjectURL(this.audioBlob);
         const audioContext = new AudioContext();
         const audioBuffer = await audioContext.decodeAudioData(await audioBlob.arrayBuffer());
 
-        return this.languageModel.promptStreaming([
+        return languageModel.promptStreaming([
             {
                 role: "user",
                 content: "Transcribe the following audio:",
