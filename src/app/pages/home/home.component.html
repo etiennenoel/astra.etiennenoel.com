@@ -4,6 +4,7 @@
   </header>
 
   <div class="view-container">
+    <app-microphone-view style="z-index: 10000; position: absolute; text-align: center; width: 100%; top: 25px; overflow: auto; padding: 0 25px 0 25px;"></app-microphone-view>
 
     <!-- App Microphone Visualizer Component -->
     <app-microphone-visualizer *ngIf="currentView === 'microphone'"></app-microphone-visualizer>
@@ -26,9 +27,5 @@
     </div>
   </div>
 
-
-  <!-- Footer Controls -->
-  <app-microphone-view></app-microphone-view>
-
-  <app-footer></app-footer>
+  <app-footer class="mt-3"></app-footer>
 </div>

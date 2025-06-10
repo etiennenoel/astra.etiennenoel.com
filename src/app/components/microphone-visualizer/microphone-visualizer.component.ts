@@ -63,20 +63,8 @@ export class MicrophoneVisualizerComponent extends BaseComponent implements Afte
 
   override ngOnDestroy(): void {
     super.ngOnDestroy();
-    if (isPlatformServer(this.platformId)) {
-      return;
-    }
 
-    if (this.animationFrameId) {
-      cancelAnimationFrame(this.animationFrameId);
-    }
-    if (this.source) {
-      this.source.disconnect();
-    }
-    if (this.audioContext && this.audioContext.state !== 'closed') {
-      this.audioContext.close();
-    }
-    window.removeEventListener('resize', this.onResize);
+    this.stopAudio()
     // No need to remove listener from startButton if the component is destroyed
     // as the element itself will be removed from DOM.
   }
@@ -127,7 +115,22 @@ export class MicrophoneVisualizerComponent extends BaseComponent implements Afte
   }
 
   private stopAudio() {
+    if (isPlatformServer(this.platformId)) {
+      return;
+    }
 
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
+    if (this.source) {
+      this.source.disconnect();
+    }
+    if (this.audioContext && this.audioContext.state !== 'closed') {
+      this.audioContext.close();
+    }
+    window.removeEventListener('resize', this.onResize);
   }
 
   private animate(): void {
