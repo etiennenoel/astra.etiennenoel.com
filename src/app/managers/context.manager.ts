@@ -123,6 +123,7 @@ export class ContextManager {
             utterance.voice = this.selectedVoice;
           }
           utterance.rate = 1.5; // Adjust rate as desired (1.0 is default)
+          utterance.pitch = 1;
           this.speechSynthesis.speak(utterance);
         } catch (error) {
           console.error('Speech synthesis error:', error);
