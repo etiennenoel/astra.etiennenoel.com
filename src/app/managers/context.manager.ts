@@ -11,7 +11,7 @@ import {CameraRecordingService} from '../services/camera-recording.service';
 export class ContextManager {
 
   stream?: MediaStream;
-
+  speechSynthesis: SpeechSynthesis;
   capturingContext: boolean = false;
 
 
@@ -22,7 +22,7 @@ export class ContextManager {
     private readonly cameraRecordingService: CameraRecordingService,
     private readonly promptManager: PromptManager,
     ) {
-
+    this.speechSynthesis = window.speechSynthesis;
     this.eventStore.captureContext.subscribe(value => {
       if (value) {
         this.captureContext();
@@ -83,8 +83,15 @@ export class ContextManager {
 
     const agentResponseStream = this.promptManager.promptStreaming(transcribedText, imagePromptContent);
 
+    this.speechSynthesis.cancel();
     for await (const chunk of agentResponseStream) {
       this.eventStore.agentResponseAvailable.next(chunk);
+      try {
+        const utterance = new SpeechSynthesisUtterance(chunk);
+        this.speechSynthesis.speak(utterance);
+      } catch (error) {
+        console.error("Error speaking utterance:", error);
+      }
     }
 
     // Yield again
