@@ -14,4 +14,6 @@ export class EventStore {
   public readonly agentResponseAvailable = new BehaviorSubject<void | string>(undefined);
 
   public readonly isProcessing = new BehaviorSubject<void | boolean>(undefined);
+
+  public readonly isCameraOn = new BehaviorSubject<void | boolean>(undefined); // New event
 }
