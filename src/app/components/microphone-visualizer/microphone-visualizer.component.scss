@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+.microphone-visualizer-container {
+  width: 100%;
+  height: 100%;
+  position: relative; /* Important for child absolute positioning */
+  overflow: hidden; /* To contain the canvas if it tries to overflow */
+  background-color: #0c0a1d; /* Default background */
+  font-family: 'Inter', sans-serif; /* Apply base font to container */
+}
+
+/* Copied styles from the provided HTML */
+canvas#visualizer { /* Added ID for specificity */
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+div#permission-overlay { /* Added ID for specificity */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0,0,0,0.7);
+    z-index: 10;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    /* font-family is inherited from .microphone-visualizer-container */
+}
+
+button#startButton { /* Added ID for specificity */
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: white;
+    background-image: linear-gradient(to right, #6d28d9, #d946ef);
+    border: none;
+    border-radius: 9999px; /* pill shape */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 25px rgba(173, 70, 239, 0.4);
+}
+
+button#startButton:hover { /* Added ID for specificity */
+    transform: scale(1.05);
+    box-shadow: 0 6px 30px rgba(173, 70, 239, 0.6);
+}
+
+/* Tailwind classes like text-3xl, font-bold, mb-4, etc., in the HTML will be handled by the global Tailwind setup. */

@@ -5,9 +5,8 @@
 
 <div class="view-container">
 
-  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
-    <app-microphone-view></app-microphone-view>
-  </div>
+  <!-- App Microphone Visualizer Component -->
+  <app-microphone-visualizer *ngIf="currentView === 'microphone'"></app-microphone-visualizer>
 
   <!-- App Camera View Component -->
   <app-camera-view
