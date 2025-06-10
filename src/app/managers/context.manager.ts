@@ -31,9 +31,20 @@ export class ContextManager {
       if (this.speechSynthesis) {
         this.speechSynthesis.onvoiceschanged = () => {
           const voices = this.speechSynthesis!.getVoices();
-          this.selectedVoice = voices.find(voice => voice.lang === 'en-GB') || null;
-          if (!this.selectedVoice) {
-            console.warn('No British English (en-GB) voice found. Using default voice.');
+          const britishVoices = voices.filter(voice => voice.lang === 'en-GB');
+
+          if (britishVoices.length > 0) {
+            this.selectedVoice = britishVoices.find(voice => /female|woman/i.test(voice.name)) || null;
+            if (this.selectedVoice) {
+              console.log(`Found female British voice: ${this.selectedVoice.name}`);
+            } else {
+              // Fallback to the first available British voice if no female is found
+              this.selectedVoice = britishVoices[0];
+              console.warn(`No female British voice found. Using first available en-GB voice: ${this.selectedVoice.name}`);
+            }
+          } else {
+            this.selectedVoice = null;
+            console.warn('No British English (en-GB) voices found. Using default voice.');
           }
         };
         // Trigger loading voices if they haven't been loaded yet for some browsers
