@@ -11,7 +11,7 @@ export class ActionButtonComponent {
   icon?: string;
 
   @Input()
-  color: "transparent" | "white" | "red" = "transparent"
+  color: "transparent" | "white" | "red" | "blue" = "transparent"
 
   @Input()
   disabled = false;
