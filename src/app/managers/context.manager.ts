@@ -78,6 +78,10 @@ export class ContextManager {
     }
 
     this.audioRecordingService.stopRecording();
+
+    if (this.speechSynthesis) {
+      this.speechSynthesis.cancel();
+    }
   }
 
   async captureContext() {
@@ -130,7 +134,7 @@ export class ContextManager {
               if (this.selectedVoice) {
                 utterance.voice = this.selectedVoice;
               }
-              utterance.rate = 1.5; // Adjust rate as desired (1.0 is default)
+              utterance.rate = 1; // Adjust rate as desired (1.0 is default)
               utterance.pitch = 1;
               this.speechSynthesis.speak(utterance);
             } catch (error) {
@@ -154,7 +158,7 @@ export class ContextManager {
           if (this.selectedVoice) {
             utterance.voice = this.selectedVoice;
           }
-          utterance.rate = 1.5; // Adjust rate as desired (1.0 is default)
+          utterance.rate = 0.5; // Adjust rate as desired (1.0 is default)
           utterance.pitch = 1;
           this.speechSynthesis.speak(utterance);
         } catch (error) {
