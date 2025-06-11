@@ -1,7 +1,8 @@
-import { Component, Inject } from '@angular/core'; // Added Inject here
+import {Component, Inject, OnInit} from '@angular/core'; // Added Inject here
 import { BaseComponent } from '../../components/base/base.component';
 import { DOCUMENT } from '@angular/common';
-import { PromptManager } from '../../managers/prompt.manager'; // Import PromptManager
+import { PromptManager } from '../../managers/prompt.manager';
+import {ConversationHistoryManager} from '../../managers/conversation-history.manager'; // Import PromptManager
 
 @Component({
   selector: 'app-conversation',
@@ -9,15 +10,24 @@ import { PromptManager } from '../../managers/prompt.manager'; // Import PromptM
   templateUrl: './conversation.page.html',
   styleUrls: ['./conversation.page.scss']
 })
-export class ConversationPage extends BaseComponent {
+export class ConversationPage extends BaseComponent implements OnInit {
   public newPrompt: string = '';
   public isSending: boolean = false;
 
   constructor(
     @Inject(DOCUMENT) document: Document,
-    public promptManager: PromptManager
+    public promptManager: PromptManager,
+    public readonly conversationHistoryManager: ConversationHistoryManager,
   ) {
     super(document);
+  }
+
+  override ngOnInit() {
+    super.ngOnInit();
+
+    this.subscriptions.push(this.conversationHistoryManager.conversationHistory$.subscribe(value => {
+
+    }));
   }
 
   async submitPrompt(): Promise<void> {

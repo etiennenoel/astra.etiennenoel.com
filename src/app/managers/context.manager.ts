@@ -7,6 +7,7 @@ import {PromptManager} from './prompt.manager';
 import {CameraRecordingService} from '../services/camera-recording.service';
 import {ScreenshareRecordingService} from '../services/screenshare-recording.service';
 import {StateContext} from '../states/state.context';
+import {ConversationHistoryManager} from './conversation-history.manager';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,8 @@ export class ContextManager {
     private readonly promptManager: PromptManager,
     private readonly screenshareRecordingService: ScreenshareRecordingService,
     private readonly stateContext: StateContext,
-    ) {
+    private readonly conversationHistoryManager: ConversationHistoryManager,
+  ) {
     if (isPlatformBrowser(this.platformId) && this.document.defaultView) {
       this.speechSynthesis = this.document.defaultView.speechSynthesis;
       if (this.speechSynthesis) {
@@ -137,21 +139,21 @@ export class ContextManager {
       transcribedText += chunk;
     }
 
-    const agentResponsePromise = this.promptManager.promptStreaming(transcribedText, imagePromptContent);
+    const agentResponseStream = this.promptManager.promptStreaming(transcribedText, imagePromptContent);
 
     if (this.speechSynthesis) {
       this.speechSynthesis.cancel();
     }
+
+    let completeResponse = "";
+
     let sentenceBuffer = "";
     const sentenceRegex = /([^.!?]+[.!?])\s*/g;
 
-    try {
-      const fullAgentResponse = await agentResponsePromise; // Await the promise
-
-      // The following logic now operates on the full response string
-      this.eventStore.agentResponseAvailable.next(fullAgentResponse);
-      sentenceBuffer += fullAgentResponse;
-
+    for await (const chunk of agentResponseStream) {
+      this.eventStore.agentResponseAvailable.next(chunk);
+      sentenceBuffer += chunk;
+      completeResponse += chunk;
       let match;
       while ((match = sentenceRegex.exec(sentenceBuffer)) !== null) {
         const sentence = match[1].trim();
@@ -171,40 +173,31 @@ export class ContextManager {
           }
         }
         sentenceBuffer = sentenceBuffer.substring(match.index + match[0].length);
+        // Reset lastIndex since we modified the string
         sentenceRegex.lastIndex = 0;
       }
+    }
 
-      // Process any remaining text in the buffer after sentence extraction
-      const remainingTextInSentenceBuffer = sentenceBuffer.trim();
-      if (remainingTextInSentenceBuffer) {
-        // This event might be redundant if fullAgentResponse was already sent and UI handles it.
-        // However, if speech synthesis needs to speak this remaining part specifically:
-        // this.eventStore.agentResponseAvailable.next(remainingTextInSentenceBuffer);
-        if (this.speechSynthesis) {
-          try {
-            const utterance = new SpeechSynthesisUtterance(remainingTextInSentenceBuffer);
-            if (this.selectedVoice) {
-              utterance.voice = this.selectedVoice;
-            }
-            // Potentially different rate/pitch for remnants, or keep consistent
-            utterance.rate = 1;
-            utterance.pitch = 1;
-            this.speechSynthesis.speak(utterance);
-          } catch (error) {
-            console.error('Speech synthesis error for remaining text:', error);
+    // Process any remaining text in the buffer
+    const remainingText = sentenceBuffer.trim();
+    if (remainingText) {
+      this.eventStore.agentResponseAvailable.next(remainingText);
+      if (this.speechSynthesis) {
+        try {
+          const utterance = new SpeechSynthesisUtterance(remainingText);
+          if (this.selectedVoice) {
+            utterance.voice = this.selectedVoice;
           }
+          utterance.rate = 0.5; // Adjust rate as desired (1.0 is default)
+          utterance.pitch = 1;
+          this.speechSynthesis.speak(utterance);
+        } catch (error) {
+          console.error('Speech synthesis error:', error);
         }
       }
-
-    } catch (error) {
-      console.error("Error processing agent response in context.manager:", error);
-      this.eventStore.agentResponseAvailable.next("Sorry, an error occurred while getting the response.");
-      if (this.speechSynthesis) {
-          const utterance = new SpeechSynthesisUtterance("Sorry, an error occurred.");
-          if (this.selectedVoice) { utterance.voice = this.selectedVoice; }
-          this.speechSynthesis.speak(utterance);
-      }
     }
+
+    this.conversationHistoryManager.addResponse(completeResponse);
 
     // Yield again
     this.capturingContext = false;

@@ -2,27 +2,35 @@
   <h1>Conversation</h1>
 
   <div class="chat-history">
-    <div *ngFor="let entry of promptManager.conversationHistory" class="chat-entry">
+    <div *ngFor="let entry of conversationHistoryManager.conversationHistory" class="chat-entry">
+      <span class="timestamp">{{ entry.timestamp | date:'shortTime' }}</span>
       <div class="entry-header">
-        <span class="role-{{entry.role}}">{{ entry.role === 'user' ? 'You' : 'Assistant' }}</span>
-        <span class="timestamp">{{ entry.timestamp | date:'shortTime' }}</span>
+        <span>You:</span>
+
       </div>
       <div class="entry-content">
-        <p>{{ entry.content }}</p>
+        <div>{{ entry.prompts | json }}</div>
+      </div>
+      <div class="entry-header">
+        <span>Assistance:</span>
+      </div>
+      <div class="entry-content">
+        <div>{{ entry.assistantResponse }}</div>
       </div>
     </div>
-    <div *ngIf="promptManager.conversationHistory.length === 0">
+    <div *ngIf="conversationHistoryManager.conversationHistory.length === 0">
       <p>No conversation yet. Start by typing a message below.</p>
     </div>
   </div>
 
   <div class="prompt-input-area">
     <textarea
+      class="form-control"
       [(ngModel)]="newPrompt"
       placeholder="Type your message here..."
       rows="3"
     ></textarea>
-    <button (click)="submitPrompt()" [disabled]="isSending">
+    <button class="btn btn-primary" (click)="submitPrompt()" [disabled]="isSending">
       {{ isSending ? 'Sending...' : 'Send' }}
     </button>
   </div>
