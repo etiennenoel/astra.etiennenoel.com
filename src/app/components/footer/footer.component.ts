@@ -17,6 +17,9 @@ export class FooterComponent extends BaseComponent implements AfterViewInit {
   @Input()
   isCameraOn = false;
 
+  @Input()
+  isScreenshareOn = false;
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     @Inject(DOCUMENT) document: Document,
@@ -52,6 +55,12 @@ export class FooterComponent extends BaseComponent implements AfterViewInit {
   toggleCamera() {
     this.isCameraOn = !this.isCameraOn;
     this.eventStore.isCameraOn.next(this.isCameraOn); // Dispatch the event
+    this.isScreenshareOn = false;
+  }
+
+  toggleScreenshare() {
+    this.isScreenshareOn = !this.isScreenshareOn;
+    this.eventStore.isScreenshareOn.next(this.isScreenshareOn); // Dispatch the event
   }
 
   exit() {

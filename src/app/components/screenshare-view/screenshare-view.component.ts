@@ -1,0 +1,33 @@
+import {AfterViewInit, Component, OnInit} from '@angular/core';
+
+@Component({
+  selector: 'app-screenshare-view',
+  standalone: false,
+  templateUrl: './screenshare-view.component.html',
+  styleUrls: ['./screenshare-view.component.scss']
+})
+export class ScreenshareViewComponent implements OnInit, AfterViewInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+
+  ngAfterViewInit(): void {
+    // Start screen sharing after the view has initialized
+    this.startScreenShare();
+  }
+
+  async startScreenShare() {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      const videoElement = document.querySelector('video');
+      if (videoElement) {
+        videoElement.srcObject = stream;
+      }
+    } catch (err) {
+      console.error("Error: " + err);
+    }
+  }
+}

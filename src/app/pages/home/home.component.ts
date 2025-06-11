@@ -15,7 +15,7 @@ import {PromptManager} from '../../managers/prompt.manager';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent extends BaseComponent implements OnInit {
-  currentView: 'microphone' | 'camera' = 'microphone';
+  currentView: 'microphone' | 'camera' | 'screenshare' = 'microphone';
   messageBoxText: string | null = null;
   isMessageBoxVisible: boolean = false;
 
@@ -68,6 +68,21 @@ export class HomeComponent extends BaseComponent implements OnInit {
         this.currentView = 'microphone';
       }
     }));
+
+    this.subscriptions.push(this.eventStore.isScreenshareOn.subscribe(value => {
+      if (value === undefined) {
+        return;
+      }
+      if (value) { // If screenshare is on
+        this.currentView = 'screenshare';
+      } else { // If screenshare is off
+        this.currentView = 'microphone';
+      }
+    }));
+  }
+
+  showScreenshareView() {
+    this.currentView = 'screenshare';
   }
 
   handleCameraMessage(message: string) {
