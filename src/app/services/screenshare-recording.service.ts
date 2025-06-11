@@ -43,6 +43,26 @@ export class ScreenshareRecordingService {
     }
   }
 
+  captureFrame(): HTMLCanvasElement | null {
+    if (!this.videoElement) {
+      this.messageEmitter.emit('Video feed or canvas not ready for capture.');
+      return null;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = this.videoElement.videoWidth;
+    canvas.height = this.videoElement.videoHeight;
+    const context = canvas.getContext('2d');
+
+    if (context) {
+      context.drawImage(this.videoElement, 0, 0, canvas.width, canvas.height);
+      return canvas;
+    } else {
+      this.messageEmitter.emit('Could not get canvas context for capture.');
+      return null;
+    }
+  }
+
   stopScreenShare(): void {
     this.resetStream();
     if (this.videoElement) {

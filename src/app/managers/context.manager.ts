@@ -5,6 +5,7 @@ import {AudioRecordingService} from '../services/audio-recording.service';
 import {AudioVisualizerService} from '../services/audio-visualizer.service';
 import {PromptManager} from './prompt.manager';
 import {CameraRecordingService} from '../services/camera-recording.service';
+import {ScreenshareRecordingService} from '../services/screenshare-recording.service';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,7 @@ export class ContextManager {
     private readonly audioVisualizerService: AudioVisualizerService,
     private readonly cameraRecordingService: CameraRecordingService,
     private readonly promptManager: PromptManager,
+    private readonly screenshareRecordingService: ScreenshareRecordingService,
     ) {
     if (isPlatformBrowser(this.platformId) && this.document.defaultView) {
       this.speechSynthesis = this.document.defaultView.speechSynthesis;
@@ -108,6 +110,14 @@ export class ContextManager {
       }
     }
 
+    if(this.screenshareRecordingService.isStreaming()) {
+      const image = this.screenshareRecordingService.captureFrame();
+
+      if(image !== null) {
+        imagePromptContent = await createImageBitmap(image);
+      }
+    }
+
     // Audio transcription of what we have recorded so far
     const audioBlob = await this.audioRecordingService.stopRecording();
 
@@ -128,12 +138,12 @@ export class ContextManager {
     const sentenceRegex = /([^.!?]+[.!?])\s*/g;
 
     for await (const chunk of agentResponseStream) {
+      this.eventStore.agentResponseAvailable.next(chunk);
       sentenceBuffer += chunk;
       let match;
       while ((match = sentenceRegex.exec(sentenceBuffer)) !== null) {
         const sentence = match[1].trim();
         if (sentence) {
-          this.eventStore.agentResponseAvailable.next(sentence);
           if (this.speechSynthesis) {
             try {
               const utterance = new SpeechSynthesisUtterance(sentence);
