@@ -15,4 +15,7 @@ export class ActionButtonComponent {
 
   @Input()
   disabled = false;
+
+  @Input()
+  isActive = false;
 }

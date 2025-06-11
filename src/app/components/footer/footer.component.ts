@@ -1,106 +1,90 @@
-import {AfterViewInit, Component, Inject, Input, OnInit, PLATFORM_ID} from '@angular/core';
-import {EventStore} from '../../stores/event.store';
-import {DOCUMENT, isPlatformServer} from '@angular/common';
-import {BaseComponent} from '../base/base.component';
-import {FormControl} from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { StateMachineService } from '../../services/state-machine.service';
+import { ViewState } from '../../interfaces/view-state.interface';
+import { ViewStateEnum } from '../../enums/view-state.enum';
 
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
-  standalone: false,
-  styleUrl: './footer.component.scss'
+  styleUrls: ['./footer.component.scss'],
+  standalone: false, // As per instructions.md
 })
-export class FooterComponent extends BaseComponent implements OnInit, AfterViewInit {
+export class FooterComponent implements OnInit, OnDestroy {
+  isCameraActive = false;
+  isScreenshareActive = false;
+  isPauseActive = false;
 
-  @Input()
-  isPaused = true
-
-  @Input()
-  isCameraOn = false;
-
-  @Input()
-  isScreenshareOn = false;
-
-  detectSilenceFormControl = new FormControl<boolean>(true);
+  private stateSubscription: Subscription | undefined;
+  currentViewState: ViewState | undefined;
 
   constructor(
-    @Inject(PLATFORM_ID) private platformId: Object,
-    @Inject(DOCUMENT) document: Document,
-    private readonly eventStore: EventStore,
-  ) {
-    super(document)
+    private router: Router,
+    private stateMachineService: StateMachineService
+  ) {}
+
+  ngOnInit(): void {
+    this.stateSubscription = this.stateMachineService.currentViewState$.subscribe(
+      (state: ViewState) => {
+        this.currentViewState = state;
+        this.isCameraActive = state.cameraButtonActive();
+        this.isScreenshareActive = state.screenshareButtonActive();
+        this.isPauseActive = state.pauseButtonActive();
+
+        // Navigate based on state, if needed by other parts of your application
+        // For now, we just update button states.
+        // Example:
+        // if (state.currentState === ViewStateEnum.CameraView) {
+        //   this.router.navigate(['/camera']);
+        // } else if (state.currentState === ViewStateEnum.ScreenshareView) {
+        //   this.router.navigate(['/screenshare']);
+        // } else {
+        //   // Potentially navigate to a home/paused view if that exists
+        //   // this.router.navigate(['/']);
+        // }
+      }
+    );
   }
 
-  override ngOnInit() {
-    super.ngOnInit();
-
-    if(isPlatformServer(this.platformId)) {
-      return;
+  ngOnDestroy(): void {
+    if (this.stateSubscription) {
+      this.stateSubscription.unsubscribe();
     }
+  }
 
-    this.subscriptions.push(this.detectSilenceFormControl.valueChanges.subscribe(value => {
-      if(value === null) {
-        return;
-      }
-
-      localStorage.setItem("detectSilence", value + "")
-
-      if (value) {
-        this.eventStore.detectSilence.next(true); // Emit true to start detecting silence
-      } else {
-        this.eventStore.detectSilence.next(false); // Emit false to stop detecting silence
-      }
-    }))
-
-    // Restore the default value of detectSilence from localStorage
-    const storedValue = localStorage.getItem("detectSilence");
-    if (storedValue !== null) {
-      this.detectSilenceFormControl.setValue(storedValue === 'true');
+  onCameraClick(): void {
+    if (this.currentViewState?.currentState === ViewStateEnum.CameraView) {
+      // If already in camera view, clicking again might mean going to pause, or do nothing
+      // Based on current design, it means going to Paused state.
+      this.stateMachineService.pause();
+      this.router.navigate(['/']); // Navigate to home/paused route
     } else {
-      this.detectSilenceFormControl.setValue(true); // Default to true if not set
+      this.stateMachineService.startCameraView();
+      this.router.navigate(['/camera']);
     }
-
-
-
-
   }
 
-  ngAfterViewInit(): void {
-    if(isPlatformServer(this.platformId)) {
-      return;
+  onScreenshareClick(): void {
+    if (this.currentViewState?.currentState === ViewStateEnum.ScreenshareView) {
+      // If already in screenshare view, clicking again might mean going to pause
+      this.stateMachineService.pause();
+      this.router.navigate(['/']); // Navigate to home/paused route
+    } else {
+      this.stateMachineService.startScreenshareView();
+      this.router.navigate(['/screenshare']);
     }
-
-    // const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    // // @ts-expect-error
-    // const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
   }
 
-  captureContext() {
-    this.eventStore.captureContext.next(true);
+  onPauseClick(): void {
+    // Pause button should transition to the Paused state.
+    // The PausedState will determine where to go next if another button is clicked.
+    this.stateMachineService.pause();
+    this.router.navigate(['/']); // Navigate to home/paused route
   }
 
-  togglePause() {
-    this.isPaused = !this.isPaused;
-
-    if (this.isPaused) {
-      this.isCameraOn = false;
-    }
-
-    this.eventStore.isPaused.next(this.isPaused);
-  }
-
-  toggleCamera() {
-    this.isCameraOn = !this.isCameraOn;
-    this.eventStore.isCameraOn.next(this.isCameraOn); // Dispatch the event
-    this.isScreenshareOn = false;
-  }
-
-  toggleScreenshare() {
-    this.isScreenshareOn = !this.isScreenshareOn;
-    this.eventStore.isScreenshareOn.next(this.isScreenshareOn); // Dispatch the event
-  }
-
-  exit() {
-    this.window?.location.reload();
+  // Utility to easily check current state in template if needed, though properties are preferred
+  isState(stateName: ViewStateEnum): boolean {
+    return this.currentViewState?.currentState === stateName;
   }
 }

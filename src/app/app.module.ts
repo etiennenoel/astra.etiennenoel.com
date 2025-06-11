@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms'; // Added this line
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import {RootComponent} from './components/root/root.component';
@@ -12,7 +12,7 @@ import {PromptManager} from './managers/prompt.manager';
 import {AudioRecordingService} from './services/audio-recording.service';
 import {AudioVisualizerService} from './services/audio-visualizer.service';
 import { CameraRecordingService } from './services/camera-recording.service';
-import { ScreenshareRecordingService } from './services/screenshare-recording.service'; // Added this line
+import { ScreenshareRecordingService } from './services/screenshare-recording.service';
 import {FooterComponent} from './components/footer/footer.component';
 import {ActionButtonComponent} from './components/action-button/action-button.component';
 import {ContextManager} from './managers/context.manager';
@@ -21,6 +21,7 @@ import { ScreenshareViewComponent } from './components/screenshare-view/screensh
 import {EventStore} from './stores/event.store';
 import {ToastStore} from './stores/toast.store';
 import {ToastComponent} from './components/toast/toast.component';
+import { StateMachineService } from './services/state-machine.service'; // Added this line
 
 @NgModule({
   declarations: [
@@ -41,7 +42,6 @@ import {ToastComponent} from './components/toast/toast.component';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    // Added this line
   ],
   providers: [
     provideClientHydration(withEventReplay()),
@@ -54,7 +54,8 @@ import {ToastComponent} from './components/toast/toast.component';
     AudioRecordingService,
     AudioVisualizerService,
     CameraRecordingService,
-    ScreenshareRecordingService, // Added this line
+    ScreenshareRecordingService,
+    StateMachineService, // Added this line
 
     // Stores
     EventStore,
