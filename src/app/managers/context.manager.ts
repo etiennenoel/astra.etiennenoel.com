@@ -57,6 +57,12 @@ export class ContextManager {
       }
     })
 
+    this.eventStore.silenceDetected.subscribe(value => {
+      if (value) {
+        this.captureContext();
+      }
+    })
+
     this.eventStore.isPaused.subscribe(value => {
       if (value === false) {
         this.startListening();

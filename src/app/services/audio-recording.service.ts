@@ -17,10 +17,12 @@ export class AudioRecordingService {
 
   chunkAvailableCallback?: (chunk: any) => void;
 
+  silenceInterval?: any;
+
   private audioContext?: AudioContext;
   private analyserNode?: AnalyserNode;
-  private silenceThreshold = 0.01; // This might need tuning
-  private silenceDuration = 2000; // 2 seconds, this might need tuning
+  private silenceThreshold = 0.01;
+  private silenceDuration = 1000
   private silenceStartTime?: number;
   private dataArray?: Uint8Array;
 
@@ -43,9 +45,12 @@ export class AudioRecordingService {
       self.chunks.push(e.data);
 
       this.chunkAvailableCallback?.(e.data);
-      this.checkForSilence();
     }
     this.mediaRecorder.start(timeslice);
+
+    this.silenceInterval = setInterval(() => {
+      this.checkForSilence();
+    }, 100)
   }
 
   private checkForSilence() {
@@ -94,6 +99,7 @@ export class AudioRecordingService {
       throw new Error("Media Recorder is not available.");
     }
     this.cleanupAudioContext();
+    clearInterval(this.silenceInterval);
 
     const self = this;
     return new Promise((resolve, reject) => {
