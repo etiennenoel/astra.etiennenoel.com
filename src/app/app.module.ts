@@ -21,6 +21,7 @@ import { ScreenshareViewComponent } from './components/screenshare-view/screensh
 import {EventStore} from './stores/event.store';
 import {ToastStore} from './stores/toast.store';
 import {ToastComponent} from './components/toast/toast.component';
+import { ConversationPage } from './pages/conversation/conversation.page';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import {ToastComponent} from './components/toast/toast.component';
     MicrophoneVisualizerComponent,
     ScreenshareViewComponent,
     ToastComponent,
+    ConversationPage,
   ],
   imports: [
     BrowserModule,
