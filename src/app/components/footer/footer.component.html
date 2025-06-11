@@ -1,7 +1,7 @@
 <div class="d-flex align-items-center justify-content-center gap-3">
   <app-action-button [icon]="'bi-camera-video'" [color]="isCameraOn ? 'white':'transparent'" [disabled]="isPaused" (click)="toggleCamera()"></app-action-button>
   <app-action-button [icon]="'bi-window-plus'"  [color]="isScreenshareOn ? 'white':'transparent'"  [disabled]="isPaused" (click)="toggleScreenshare()"></app-action-button>
-<!--  <app-action-button [icon]="'bi-circle'" [disabled]="isPaused" [color]="isPaused ? 'transparent':'blue'" (click)="captureContext()"></app-action-button>-->
+  <app-action-button [icon]="'bi-circle'" [disabled]="isPaused" [color]="isPaused ? 'transparent':'blue'" (click)="captureContext()"></app-action-button>
   <app-action-button [icon]="isPaused ? 'bi-soundwave' : 'bi-pause-fill'" (click)="togglePause()"></app-action-button>
   <app-action-button [icon]="'bi-x'" color="red" (click)="exit()"></app-action-button>
 </div>
