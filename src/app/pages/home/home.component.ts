@@ -5,6 +5,7 @@ import {DOCUMENT} from '@angular/common';
 import {EventStore} from '../../stores/event.store';
 import {ContextManager} from '../../managers/context.manager';
 import {PromptManager} from '../../managers/prompt.manager';
+import {ToastStore} from '../../stores/toast.store';
 
 // MicrophoneComponent is not needed for ViewChild access if interaction is only through Input/Output
 
@@ -16,17 +17,13 @@ import {PromptManager} from '../../managers/prompt.manager';
 })
 export class HomeComponent extends BaseComponent implements OnInit {
   currentView: 'microphone' | 'camera' | 'screenshare' = 'microphone';
-  messageBoxText: string | null = null;
-  isMessageBoxVisible: boolean = false;
 
-  // New property for MicrophoneComponent
   isPaused: boolean = false;
-
-  @ViewChild(CameraViewComponent) cameraViewInstance!: CameraViewComponent;
 
   constructor(
     @Inject(DOCUMENT) document: Document,
     private readonly eventStore: EventStore,
+    private readonly toastStore: ToastStore,
     private readonly contextManager: ContextManager,
     private readonly promptManager: PromptManager,
   ) {
@@ -89,13 +86,10 @@ export class HomeComponent extends BaseComponent implements OnInit {
     this.showMessage(message);
   }
 
-  // --- UI Helper Functions ---
   showMessage(message: string) {
-    this.messageBoxText = message;
-    this.isMessageBoxVisible = true;
-    setTimeout(() => {
-      this.isMessageBoxVisible = false;
-      this.messageBoxText = null;
-    }, 3000);
+    this.toastStore.publish({
+      message,
+      position: 'bottom'
+    })
   }
 }

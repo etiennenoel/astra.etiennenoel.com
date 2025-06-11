@@ -6,8 +6,9 @@ import {isPlatformServer} from "@angular/common";
 })
 export class PromptManager {
 
-    // @ts-expect-error
     private languageModel!: LanguageModel;
+
+    prompts: LanguageModelPrompt[] = []
 
     constructor(
         @Inject(PLATFORM_ID) private platformId: Object,
@@ -18,7 +19,6 @@ export class PromptManager {
     }
 
     async setup () {
-        // @ts-expect-error
         this.languageModel = await LanguageModel.create({
             expectedInputs: [
                 {type: "text"},
@@ -29,7 +29,6 @@ export class PromptManager {
     }
 
     promptStreaming(prompt: string, image?: ImageBitmap): ReadableStream {
-        // @ts-expect-error
         const prompts: LanguageModelPrompt = [
             {
                 role: "assistant",
@@ -53,12 +52,13 @@ export class PromptManager {
             });
         }
 
+        this.prompts.push(prompts);
+
         return this.languageModel.promptStreaming(prompts);
     }
 
     async transcribe(audioBlob: Blob): Promise<ReadableStream> {
         // More efficient to create a new model than polluting the old session
-        // @ts-expect-error
         const languageModel = await LanguageModel.create({
             expectedInputs: [
                 {type: "text"},

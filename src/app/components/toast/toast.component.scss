@@ -1,0 +1,18 @@
+div {
+  border-radius: 15px;
+  position: fixed;
+  padding: 4px;
+
+  text-align: center;
+
+  left: calc(50% - 100px);
+  width: 200px;
+
+  .top {
+    top: 25px;
+  }
+
+  .bottom {
+    bottom: 0;
+  }
+}
