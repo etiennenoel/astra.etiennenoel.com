@@ -16,6 +16,7 @@ import {FooterComponent} from './components/footer/footer.component';
 import {ActionButtonComponent} from './components/action-button/action-button.component';
 import {ContextManager} from './managers/context.manager';
 import { MicrophoneVisualizerComponent } from './components/microphone-visualizer/microphone-visualizer.component';
+import { ScreenshareViewComponent } from './components/screenshare-view/screenshare-view.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { MicrophoneVisualizerComponent } from './components/microphone-visualize
     HomeComponent,
     CameraViewComponent,
     MicrophoneViewComponent,
-    MicrophoneVisualizerComponent
+    MicrophoneVisualizerComponent,
+    ScreenshareViewComponent
   ],
   imports: [
     BrowserModule,

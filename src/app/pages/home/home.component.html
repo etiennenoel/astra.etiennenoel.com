@@ -15,6 +15,9 @@
       (message)="handleCameraMessage($event)">
     </app-camera-view>
 
+    <!-- App Screenshare View Component -->
+    <app-screenshare-view *ngIf="currentView === 'screenshare'"></app-screenshare-view>
+
     <!-- Message Box -->
     <div *ngIf="isMessageBoxVisible" id="message-box"
          class="position-fixed start-50 translate-middle-x bg-dark text-white text-center py-2 px-3 rounded-3 shadow-lg z-3 message-box-custom-bottom"
@@ -24,4 +27,5 @@
   </div>
 
   <app-footer class="mt-3"></app-footer>
+  <button (click)="showScreenshareView()">Show Screenshare</button> <!-- Temporary button for testing -->
 </div>
