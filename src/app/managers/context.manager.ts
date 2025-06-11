@@ -114,11 +114,43 @@ export class ContextManager {
     if (this.speechSynthesis) {
       this.speechSynthesis.cancel();
     }
+    let sentenceBuffer = "";
+    const sentenceRegex = /([^.!?]+[.!?])\s*/g;
+
     for await (const chunk of agentResponseStream) {
-      this.eventStore.agentResponseAvailable.next(chunk);
+      sentenceBuffer += chunk;
+      let match;
+      while ((match = sentenceRegex.exec(sentenceBuffer)) !== null) {
+        const sentence = match[1].trim();
+        if (sentence) {
+          this.eventStore.agentResponseAvailable.next(sentence);
+          if (this.speechSynthesis) {
+            try {
+              const utterance = new SpeechSynthesisUtterance(sentence);
+              if (this.selectedVoice) {
+                utterance.voice = this.selectedVoice;
+              }
+              utterance.rate = 1.5; // Adjust rate as desired (1.0 is default)
+              utterance.pitch = 1;
+              this.speechSynthesis.speak(utterance);
+            } catch (error) {
+              console.error('Speech synthesis error:', error);
+            }
+          }
+        }
+        sentenceBuffer = sentenceBuffer.substring(match.index + match[0].length);
+        // Reset lastIndex since we modified the string
+        sentenceRegex.lastIndex = 0;
+      }
+    }
+
+    // Process any remaining text in the buffer
+    const remainingText = sentenceBuffer.trim();
+    if (remainingText) {
+      this.eventStore.agentResponseAvailable.next(remainingText);
       if (this.speechSynthesis) {
         try {
-          const utterance = new SpeechSynthesisUtterance(chunk);
+          const utterance = new SpeechSynthesisUtterance(remainingText);
           if (this.selectedVoice) {
             utterance.voice = this.selectedVoice;
           }
