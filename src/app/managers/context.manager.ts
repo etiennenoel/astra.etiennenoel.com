@@ -1,12 +1,12 @@
-import {Injectable, Inject, PLATFORM_ID} from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import {EventStore} from '../stores/event.store';
-import {AudioRecordingService} from '../services/audio-recording.service';
-import {AudioVisualizerService} from '../services/audio-visualizer.service';
-import {PromptManager} from './prompt.manager';
-import {CameraRecordingService} from '../services/camera-recording.service';
-import {ScreenshareRecordingService} from '../services/screenshare-recording.service';
-import {StateContext} from '../states/state.context';
+import { EventStore } from '../stores/event.store';
+import { AudioRecordingService } from '../services/audio-recording.service';
+import { AudioVisualizerService } from '../services/audio-visualizer.service';
+import { PromptManager } from './prompt.manager';
+import { CameraRecordingService } from '../services/camera-recording.service';
+import { ScreenshareRecordingService } from '../services/screenshare-recording.service';
+import { StateContext } from '../states/state.context';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +30,7 @@ export class ContextManager {
     private readonly promptManager: PromptManager,
     private readonly screenshareRecordingService: ScreenshareRecordingService,
     private readonly stateContext: StateContext,
-    ) {
+  ) {
     if (isPlatformBrowser(this.platformId) && this.document.defaultView) {
       this.speechSynthesis = this.document.defaultView.speechSynthesis;
       if (this.speechSynthesis) {
@@ -83,7 +83,12 @@ export class ContextManager {
 
   async startListening() {
     this.promptManager.setup();
-    this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    this.stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+      },
+    });
     this.audioVisualizerService.visualize(this.stream);
     this.audioRecordingService.startRecording(this.stream)
   }
@@ -101,7 +106,7 @@ export class ContextManager {
   }
 
   async captureContext() {
-    if(this.capturingContext) {
+    if (this.capturingContext) {
       return;
     }
 
@@ -110,18 +115,18 @@ export class ContextManager {
 
     // Capture the live image if any
     let imagePromptContent;
-    if(this.cameraRecordingService.isStreaming()) {
+    if (this.cameraRecordingService.isStreaming()) {
       const image = this.cameraRecordingService.captureFrame();
 
-      if(image !== null) {
+      if (image !== null) {
         imagePromptContent = await createImageBitmap(image);
       }
     }
 
-    if(this.screenshareRecordingService.isStreaming()) {
+    if (this.screenshareRecordingService.isStreaming()) {
       const image = this.screenshareRecordingService.captureFrame();
 
-      if(image !== null) {
+      if (image !== null) {
         imagePromptContent = await createImageBitmap(image);
       }
     }
