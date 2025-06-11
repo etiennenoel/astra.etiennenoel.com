@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-screenshare-view',
@@ -6,11 +6,17 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './screenshare-view.component.html',
   styleUrls: ['./screenshare-view.component.scss']
 })
-export class ScreenshareViewComponent implements OnInit {
+export class ScreenshareViewComponent implements OnInit, AfterViewInit {
 
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+
+  ngAfterViewInit(): void {
+    // Start screen sharing after the view has initialized
+    this.startScreenShare();
   }
 
   async startScreenShare() {

@@ -68,6 +68,17 @@ export class HomeComponent extends BaseComponent implements OnInit {
         this.currentView = 'microphone';
       }
     }));
+
+    this.subscriptions.push(this.eventStore.isScreenshareOn.subscribe(value => {
+      if (value === undefined) {
+        return;
+      }
+      if (value) { // If screenshare is on
+        this.currentView = 'screenshare';
+      } else { // If screenshare is off
+        this.currentView = 'microphone';
+      }
+    }));
   }
 
   showScreenshareView() {

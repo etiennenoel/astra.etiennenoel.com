@@ -17,5 +17,7 @@ export class EventStore {
 
   public readonly isCameraOn = new BehaviorSubject<void | boolean>(undefined); // New event
 
+  public readonly isScreenshareOn = new BehaviorSubject<void | boolean>(undefined); // New event
+
   public readonly silenceDetected = new BehaviorSubject<void | boolean>(undefined);
 }
