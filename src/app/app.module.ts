@@ -7,7 +7,7 @@ import {RootComponent} from './components/root/root.component';
 import { HomeComponent } from './pages/home/home.component';
 import {LayoutComponent} from './components/layout/layout.component';
 import { CameraViewComponent } from './components/camera-view/camera-view.component';
-import { MicrophoneViewComponent } from './components/microphone-view/microphone-view.component';
+import { CaptionsViewComponent } from './components/captions-view/captions-view.component';
 import {PromptManager} from './managers/prompt.manager';
 import {AudioRecordingService} from './services/audio-recording.service';
 import {AudioVisualizerService} from './services/audio-visualizer.service';
@@ -27,7 +27,7 @@ import { ScreenshareViewComponent } from './components/screenshare-view/screensh
     FooterComponent,
     HomeComponent,
     CameraViewComponent,
-    MicrophoneViewComponent,
+    CaptionsViewComponent,
     MicrophoneVisualizerComponent,
     ScreenshareViewComponent
   ],

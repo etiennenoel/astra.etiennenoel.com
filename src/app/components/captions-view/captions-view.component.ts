@@ -16,12 +16,12 @@ import {BaseComponent} from "../base/base.component";
 import {PromptManager} from "../../managers/prompt.manager";
 
 @Component({
-    selector: 'app-microphone-view',
+    selector: 'app-captions-view',
     standalone: false,
-    templateUrl: './microphone-view.component.html',
-    styleUrls: ['./microphone-view.component.scss']
+    templateUrl: './captions-view.component.html',
+    styleUrls: ['./captions-view.component.scss']
 })
-export class MicrophoneViewComponent extends BaseComponent implements OnInit, AfterViewInit {
+export class CaptionsViewComponent extends BaseComponent implements OnInit, AfterViewInit {
 
     isListening?: boolean = undefined; // Default value, will be overridden by parent
 
