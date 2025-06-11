@@ -20,4 +20,6 @@ export class EventStore {
   public readonly isScreenshareOn = new BehaviorSubject<void | boolean>(undefined); // New event
 
   public readonly silenceDetected = new BehaviorSubject<void | boolean>(undefined);
+
+  public readonly detectSilence = new BehaviorSubject<boolean>(false);
 }

@@ -17,6 +17,7 @@ export class ContextManager {
   private selectedVoice: SpeechSynthesisVoice | null = null;
   capturingContext: boolean = false;
 
+  detectSilence: boolean = false;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -60,7 +61,7 @@ export class ContextManager {
     })
 
     this.eventStore.silenceDetected.subscribe(value => {
-      if (value) {
+      if (value && this.detectSilence) {
         this.captureContext();
       }
     })
@@ -72,6 +73,10 @@ export class ContextManager {
         this.stopListening();
       }
     })
+
+    this.eventStore.detectSilence.subscribe(value => {
+      this.detectSilence = value;
+    });
   }
 
   async startListening() {

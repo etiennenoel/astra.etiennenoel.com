@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms'; // Added this line
+import {FormsModule, ReactiveFormsModule} from '@angular/forms'; // Added this line
 
 import { AppRoutingModule } from './app-routing.module';
 import {RootComponent} from './components/root/root.component';
@@ -39,7 +39,9 @@ import {ToastComponent} from './components/toast/toast.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule // Added this line
+    FormsModule,
+    ReactiveFormsModule,
+    // Added this line
   ],
   providers: [
     provideClientHydration(withEventReplay()),
