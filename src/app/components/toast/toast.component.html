@@ -1,0 +1,6 @@
+@if(message !== null) {
+  <div class="bg-dark text-white text-center py-2 px-3 rounded-3 shadow-lg z-3"
+       [class.top]="message?.position === 'top'"
+       [class.bottom]="message?.position === 'bottom'"
+  >{{ message?.message }}</div>
+}

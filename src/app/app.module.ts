@@ -18,6 +18,9 @@ import {ActionButtonComponent} from './components/action-button/action-button.co
 import {ContextManager} from './managers/context.manager';
 import { MicrophoneVisualizerComponent } from './components/microphone-visualizer/microphone-visualizer.component';
 import { ScreenshareViewComponent } from './components/screenshare-view/screenshare-view.component';
+import {EventStore} from './stores/event.store';
+import {ToastStore} from './stores/toast.store';
+import {ToastComponent} from './components/toast/toast.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +33,8 @@ import { ScreenshareViewComponent } from './components/screenshare-view/screensh
     CameraViewComponent,
     CaptionsViewComponent,
     MicrophoneVisualizerComponent,
-    ScreenshareViewComponent
+    ScreenshareViewComponent,
+    ToastComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,6 +53,10 @@ import { ScreenshareViewComponent } from './components/screenshare-view/screensh
     AudioVisualizerService,
     CameraRecordingService,
     ScreenshareRecordingService, // Added this line
+
+    // Stores
+    EventStore,
+    ToastStore,
   ],
   bootstrap: [RootComponent]
 })

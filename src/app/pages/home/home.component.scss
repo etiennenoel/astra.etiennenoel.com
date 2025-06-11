@@ -45,10 +45,6 @@
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-.message-box-custom-bottom {
-  bottom: 0rem; /* Equivalent to Tailwind's bottom-24 */
-}
-
 .hover-scale-110:hover {
   transform: scale(1.1);
 }
