@@ -4,19 +4,24 @@
   </header>
 
   <div class="view-container">
-    <app-captions-view style="z-index: 10000; position: absolute; text-align: center; width: 100%; top: 25px; overflow: auto; padding: 0 25px 0 25px;"></app-captions-view>
+    <app-captions-view
+      style="z-index: 10000; position: absolute; text-align: center; width: 100%; top: 25px; overflow: auto; padding: 0 25px 0 25px;"></app-captions-view>
 
-    <!-- App Microphone Visualizer Component -->
-    <app-microphone-visualizer *ngIf="currentView === 'microphone'"></app-microphone-visualizer>
-
-    <!-- App Camera View Component -->
-    <app-camera-view
-      *ngIf="currentView === 'camera'"
-      (message)="handleCameraMessage($event)">
-    </app-camera-view>
-
-    <!-- App Screenshare View Component -->
-    <app-screenshare-view *ngIf="currentView === 'screenshare'"></app-screenshare-view>
+    @if (state) {
+      @switch (state!.currentStateEnum) {
+        @case (ViewStateEnum.MicrophoneView) {
+          <app-microphone-visualizer></app-microphone-visualizer>
+        }
+        @case (ViewStateEnum.CameraView) {
+          <app-camera-view
+            (message)="handleCameraMessage($event)">
+          </app-camera-view>
+        }
+        @case (ViewStateEnum.ScreenshareView) {
+          <app-screenshare-view></app-screenshare-view>
+        }
+      }
+    }
   </div>
 
   <app-footer class="mt-3"></app-footer>

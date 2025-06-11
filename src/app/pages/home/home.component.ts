@@ -6,6 +6,9 @@ import {EventStore} from '../../stores/event.store';
 import {ContextManager} from '../../managers/context.manager';
 import {PromptManager} from '../../managers/prompt.manager';
 import {ToastStore} from '../../stores/toast.store';
+import {StateContext} from '../../states/state.context';
+import {ViewStateInterface} from '../../interfaces/view-state.interface';
+import {ViewStateEnum} from '../../enums/view-state.enum';
 
 // MicrophoneComponent is not needed for ViewChild access if interaction is only through Input/Output
 
@@ -16,9 +19,9 @@ import {ToastStore} from '../../stores/toast.store';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent extends BaseComponent implements OnInit {
-  currentView: 'microphone' | 'camera' | 'screenshare' = 'microphone';
-
   isPaused: boolean = false;
+
+  state?: ViewStateInterface;
 
   constructor(
     @Inject(DOCUMENT) document: Document,
@@ -26,6 +29,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
     private readonly toastStore: ToastStore,
     private readonly contextManager: ContextManager,
     private readonly promptManager: PromptManager,
+    private readonly stateContext: StateContext,
   ) {
     super(document);
   }
@@ -33,55 +37,15 @@ export class HomeComponent extends BaseComponent implements OnInit {
   override ngOnInit() {
     super.ngOnInit();
 
-    this.subscriptions.push(this.eventStore.transcriptionAvailable.subscribe(value => {
-
-    }));
-
-    this.subscriptions.push(this.eventStore.agentResponseAvailable.subscribe(value => {
-
-    }));
-
-    this.subscriptions.push(this.eventStore.isPaused.subscribe(value => {
-      if (value === undefined) {
-        return;
-      }
-      this.isPaused = value;
-
-      if(this.isPaused){
-        this.currentView = 'microphone';
-      } else {
-        this.promptManager.setup();
-        this.showMessage("Press the circle to process content.");
-      }
-    }));
-
-    this.subscriptions.push(this.eventStore.isCameraOn.subscribe(value => {
-      if (value === undefined) {
-        return;
-      }
-      if (value) { // If camera is on
-        this.currentView = 'camera';
-      } else { // If camera is off
-        this.currentView = 'microphone';
-      }
-    }));
-
-    this.subscriptions.push(this.eventStore.isScreenshareOn.subscribe(value => {
-      if (value === undefined) {
-        return;
-      }
-      if (value) { // If screenshare is on
-        this.currentView = 'screenshare';
-      } else { // If screenshare is off
-        this.currentView = 'microphone';
-      }
-    }));
+    this.subscriptions.push(this.stateContext.currentState$.subscribe(value => {
+      this.state = value;
+    }))
   }
 
-  showScreenshareView() {
-    this.currentView = 'screenshare';
-  }
-
+  /**
+   * @deprecated
+   * @param message
+   */
   handleCameraMessage(message: string) {
     this.showMessage(message);
   }
@@ -92,4 +56,6 @@ export class HomeComponent extends BaseComponent implements OnInit {
       position: 'bottom'
     })
   }
+
+  protected readonly ViewStateEnum = ViewStateEnum;
 }

@@ -3,6 +3,8 @@ import {EventStore} from '../../stores/event.store';
 import {DOCUMENT, isPlatformServer} from '@angular/common';
 import {BaseComponent} from '../base/base.component';
 import {FormControl} from '@angular/forms';
+import {StateContext} from '../../states/state.context';
+import {ViewStateInterface} from '../../interfaces/view-state.interface';
 
 @Component({
   selector: 'app-footer',
@@ -10,16 +12,8 @@ import {FormControl} from '@angular/forms';
   standalone: false,
   styleUrl: './footer.component.scss'
 })
-export class FooterComponent extends BaseComponent implements OnInit, AfterViewInit {
-
-  @Input()
-  isPaused = true
-
-  @Input()
-  isCameraOn = false;
-
-  @Input()
-  isScreenshareOn = false;
+export class FooterComponent extends BaseComponent implements OnInit {
+  state!: ViewStateInterface;
 
   detectSilenceFormControl = new FormControl<boolean>(true);
 
@@ -27,6 +21,7 @@ export class FooterComponent extends BaseComponent implements OnInit, AfterViewI
     @Inject(PLATFORM_ID) private platformId: Object,
     @Inject(DOCUMENT) document: Document,
     private readonly eventStore: EventStore,
+    private readonly stateContext: StateContext,
   ) {
     super(document)
   }
@@ -37,6 +32,14 @@ export class FooterComponent extends BaseComponent implements OnInit, AfterViewI
     if(isPlatformServer(this.platformId)) {
       return;
     }
+
+    this.subscriptions.push(this.stateContext.currentState$.subscribe(value => {
+      if(!value) {
+        return;
+      }
+
+      this.state = value;
+    }))
 
     this.subscriptions.push(this.detectSilenceFormControl.valueChanges.subscribe(value => {
       if(value === null) {
@@ -59,20 +62,6 @@ export class FooterComponent extends BaseComponent implements OnInit, AfterViewI
     } else {
       this.detectSilenceFormControl.setValue(true); // Default to true if not set
     }
-
-
-
-
-  }
-
-  ngAfterViewInit(): void {
-    if(isPlatformServer(this.platformId)) {
-      return;
-    }
-
-    // const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    // // @ts-expect-error
-    // const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
   }
 
   captureContext() {
@@ -80,24 +69,15 @@ export class FooterComponent extends BaseComponent implements OnInit, AfterViewI
   }
 
   togglePause() {
-    this.isPaused = !this.isPaused;
-
-    if (this.isPaused) {
-      this.isCameraOn = false;
-    }
-
-    this.eventStore.isPaused.next(this.isPaused);
+    this.state.pauseButtonClicked();
   }
 
   toggleCamera() {
-    this.isCameraOn = !this.isCameraOn;
-    this.eventStore.isCameraOn.next(this.isCameraOn); // Dispatch the event
-    this.isScreenshareOn = false;
+    this.state.cameraButtonClicked();
   }
 
   toggleScreenshare() {
-    this.isScreenshareOn = !this.isScreenshareOn;
-    this.eventStore.isScreenshareOn.next(this.isScreenshareOn); // Dispatch the event
+    this.state.screenshareButtonClicked();
   }
 
   exit() {

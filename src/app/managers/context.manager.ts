@@ -6,6 +6,7 @@ import {AudioVisualizerService} from '../services/audio-visualizer.service';
 import {PromptManager} from './prompt.manager';
 import {CameraRecordingService} from '../services/camera-recording.service';
 import {ScreenshareRecordingService} from '../services/screenshare-recording.service';
+import {StateContext} from '../states/state.context';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,7 @@ export class ContextManager {
     private readonly cameraRecordingService: CameraRecordingService,
     private readonly promptManager: PromptManager,
     private readonly screenshareRecordingService: ScreenshareRecordingService,
+    private readonly stateContext: StateContext,
     ) {
     if (isPlatformBrowser(this.platformId) && this.document.defaultView) {
       this.speechSynthesis = this.document.defaultView.speechSynthesis;
@@ -80,6 +82,7 @@ export class ContextManager {
   }
 
   async startListening() {
+    this.promptManager.setup();
     this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     this.audioVisualizerService.visualize(this.stream);
     this.audioRecordingService.startRecording(this.stream)
