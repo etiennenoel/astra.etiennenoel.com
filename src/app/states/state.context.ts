@@ -31,6 +31,19 @@ export class StateContext {
     this.transition(ViewStateEnum.MicrophoneView);
   }
 
+  transitionToPreviousState() {
+    if(!this.previousState) {
+      return;
+    }
+
+    const currentState = this.currentState;
+    this.currentState.exiting(this.previousState.currentStateEnum);
+    this.previousState.entering(this.currentState.currentStateEnum);
+    this.currentState = this.previousState;
+    this.previousState = currentState;
+    this.currentState$.next(this.currentState);
+  }
+
   transition(viewState: ViewStateEnum) {
     if(this.currentState && this.currentState.currentStateEnum === viewState) {
       return;

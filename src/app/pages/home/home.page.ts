@@ -2,7 +2,10 @@ import {Component, Inject, OnInit, PLATFORM_ID} from '@angular/core'; // Added I
 import { BaseComponent } from '../../components/base/base.component';
 import {DOCUMENT, isPlatformServer} from '@angular/common';
 import { PromptManager } from '../../managers/prompt.manager';
-import {ConversationHistoryManager} from '../../managers/conversation-history.manager'; // Import PromptManager
+import {ConversationHistoryManager} from '../../managers/conversation-history.manager';
+import {ContextManager} from '../../managers/context.manager';
+import {StateContext} from '../../states/state.context';
+import {Router} from '@angular/router'; // Import PromptManager
 
 @Component({
   selector: 'app-conversation',
@@ -19,6 +22,8 @@ export class HomePage extends BaseComponent implements OnInit {
     @Inject(DOCUMENT) document: Document,
     public promptManager: PromptManager,
     public readonly conversationHistoryManager: ConversationHistoryManager,
+    private readonly stateContext: StateContext,
+    private readonly router: Router,
   ) {
     super(document);
   }
@@ -35,6 +40,14 @@ export class HomePage extends BaseComponent implements OnInit {
     this.subscriptions.push(this.conversationHistoryManager.conversationHistory$.subscribe(value => {
 
     }));
+  }
+
+  startLive() {
+    if(this.stateContext.previousState) {
+      this.stateContext.transitionToPreviousState();
+    }
+
+    this.router.navigateByUrl("/live")
   }
 
   async submitPrompt(): Promise<void> {

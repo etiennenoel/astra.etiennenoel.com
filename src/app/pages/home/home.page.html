@@ -57,9 +57,9 @@
     <button class="btn btn-primary d-block flex-grow-1" (click)="submitPrompt()" [disabled]="isSending">
       {{ isSending ? 'Sending...' : 'Send' }}
     </button>
-    <a class="btn btn-dark d-block" routerLink="/live">
+    <button class="btn btn-dark d-block" (click)="startLive()">
       <i class="bi bi-soundwave"></i> Start Live
-    </a>
+    </button>
     </div>
   </div>
 </div>
