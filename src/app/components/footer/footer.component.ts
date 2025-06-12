@@ -15,6 +15,7 @@ import {Router} from '@angular/router';
 })
 export class FooterComponent extends BaseComponent implements OnInit {
   state!: ViewStateInterface;
+  showAudioParametersForm: boolean = false;
 
   detectSilenceFormControl = new FormControl<boolean>(true);
 
@@ -85,5 +86,9 @@ export class FooterComponent extends BaseComponent implements OnInit {
   exit() {
     this.state.pauseButtonClicked()
     this.router.navigateByUrl("/");
+  }
+
+  public toggleAudioParametersForm(): void {
+    this.showAudioParametersForm = !this.showAudioParametersForm;
   }
 }

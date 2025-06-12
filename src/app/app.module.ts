@@ -23,6 +23,7 @@ import {ToastStore} from './stores/toast.store';
 import {ToastComponent} from './components/toast/toast.component';
 import { HomePage } from './pages/home/home.page';
 import {ConversationHistoryManager} from './managers/conversation-history.manager';
+import { AudioParametersFormComponent } from './components/audio-parameters-form/audio-parameters-form.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import {ConversationHistoryManager} from './managers/conversation-history.manage
     ScreenshareViewComponent,
     ToastComponent,
     HomePage,
+    AudioParametersFormComponent,
   ],
   imports: [
     BrowserModule,

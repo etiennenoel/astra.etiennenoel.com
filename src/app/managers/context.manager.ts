@@ -1,5 +1,5 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser, isPlatformServer } from '@angular/common';
 import {EventStore} from '../stores/event.store';
 import {AudioRecordingService} from '../services/audio-recording.service';
 import {AudioVisualizerService} from '../services/audio-visualizer.service';
@@ -84,6 +84,9 @@ export class ContextManager {
   }
 
   async startListening() {
+    if (isPlatformServer(this.platformId)) {
+      return;
+    }
     this.promptManager.setup();
     this.stream = await navigator.mediaDevices.getUserMedia({
       audio: {
@@ -108,6 +111,9 @@ export class ContextManager {
   }
 
   async captureContext() {
+    if (isPlatformServer(this.platformId)) {
+      return;
+    }
     if (this.capturingContext) {
       return;
     }

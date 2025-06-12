@@ -1,4 +1,5 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import {Inject, Injectable, EventEmitter, PLATFORM_ID} from '@angular/core';
+import {isPlatformServer} from "@angular/common";
 
 @Injectable({
   providedIn: 'root'
@@ -9,9 +10,12 @@ export class CameraRecordingService {
 
   videoElement?: HTMLVideoElement;
 
-  constructor() {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,) {}
 
   async startCamera(videoElement: HTMLVideoElement): Promise<void> {
+    if (isPlatformServer(this.platformId)) {
+      return;
+    }
     this.videoElement = videoElement;
     this.resetStream();
     try {
@@ -46,6 +50,9 @@ export class CameraRecordingService {
   }
 
   captureFrame(): HTMLCanvasElement | null {
+    if (isPlatformServer(this.platformId)) {
+      return null;
+    }
     if (!this.videoElement) {
       this.messageEmitter.emit('Video feed or canvas not ready for capture.');
       return null;
