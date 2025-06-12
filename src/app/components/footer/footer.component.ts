@@ -5,6 +5,7 @@ import {BaseComponent} from '../base/base.component';
 import {FormControl} from '@angular/forms';
 import {StateContext} from '../../states/state.context';
 import {ViewStateInterface} from '../../interfaces/view-state.interface';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-footer',
@@ -22,6 +23,7 @@ export class FooterComponent extends BaseComponent implements OnInit {
     @Inject(DOCUMENT) document: Document,
     private readonly eventStore: EventStore,
     private readonly stateContext: StateContext,
+    private readonly router: Router,
   ) {
     super(document)
   }
@@ -81,6 +83,6 @@ export class FooterComponent extends BaseComponent implements OnInit {
   }
 
   exit() {
-    this.window?.location.reload();
+    this.router.navigateByUrl("/");
   }
 }

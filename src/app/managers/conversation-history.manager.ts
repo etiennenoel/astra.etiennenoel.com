@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ConversationEntry} from '../interfaces/conversation-entry.interface';
 import {BehaviorSubject} from 'rxjs';
-import {ConversationPage} from '../pages/conversation/conversation.page';
+import {HomePage} from '../pages/home/home.page';
 
 @Injectable({
   providedIn: "root",

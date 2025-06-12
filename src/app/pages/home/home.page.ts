@@ -7,10 +7,10 @@ import {ConversationHistoryManager} from '../../managers/conversation-history.ma
 @Component({
   selector: 'app-conversation',
   standalone: false,
-  templateUrl: './conversation.page.html',
-  styleUrls: ['./conversation.page.scss']
+  templateUrl: './home.page.html',
+  styleUrls: ['./home.page.scss']
 })
-export class ConversationPage extends BaseComponent implements OnInit {
+export class HomePage extends BaseComponent implements OnInit {
   public newPrompt: string = '';
   public isSending: boolean = false;
 

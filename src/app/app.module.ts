@@ -4,7 +4,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms'; // Added this l
 
 import { AppRoutingModule } from './app-routing.module';
 import {RootComponent} from './components/root/root.component';
-import { HomeComponent } from './pages/home/home.component';
+import { LivePage } from './pages/live/live.page';
 import {LayoutComponent} from './components/layout/layout.component';
 import { CameraViewComponent } from './components/camera-view/camera-view.component';
 import { CaptionsViewComponent } from './components/captions-view/captions-view.component';
@@ -21,7 +21,7 @@ import { ScreenshareViewComponent } from './components/screenshare-view/screensh
 import {EventStore} from './stores/event.store';
 import {ToastStore} from './stores/toast.store';
 import {ToastComponent} from './components/toast/toast.component';
-import { ConversationPage } from './pages/conversation/conversation.page';
+import { HomePage } from './pages/home/home.page';
 import {ConversationHistoryManager} from './managers/conversation-history.manager';
 
 @NgModule({
@@ -31,13 +31,13 @@ import {ConversationHistoryManager} from './managers/conversation-history.manage
 
     ActionButtonComponent,
     FooterComponent,
-    HomeComponent,
+    LivePage,
     CameraViewComponent,
     CaptionsViewComponent,
     MicrophoneVisualizerComponent,
     ScreenshareViewComponent,
     ToastComponent,
-    ConversationPage,
+    HomePage,
   ],
   imports: [
     BrowserModule,

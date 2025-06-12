@@ -15,11 +15,11 @@ import {ViewStateEnum} from '../../enums/view-state.enum';
 @Component({
   selector: 'app-home',
   standalone: false,
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+  templateUrl: './live.page.html',
+  styleUrls: ['./live.page.scss'],
   host:{"class": "home"},
 })
-export class HomeComponent extends BaseComponent implements OnInit {
+export class LivePage extends BaseComponent implements OnInit {
   isPaused: boolean = false;
 
   state?: ViewStateInterface;
