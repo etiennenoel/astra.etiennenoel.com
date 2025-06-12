@@ -1,3 +1,12 @@
-.conversation-container {
-  padding: 20px;
+:host {
+  font-family: Google Sans Flex, Google Sans, Helvetica Neue, sans-serif;
+
+  font-size: 1rem;
+  letter-spacing: 0rem;
+  line-height: 1.75rem;
+}
+
+h1 {
+  color: #1b1c1d;
+  font-size: 1.25rem;
 }

@@ -1,12 +1,13 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { EventStore } from '../stores/event.store';
-import { AudioRecordingService } from '../services/audio-recording.service';
-import { AudioVisualizerService } from '../services/audio-visualizer.service';
-import { PromptManager } from './prompt.manager';
-import { CameraRecordingService } from '../services/camera-recording.service';
-import { ScreenshareRecordingService } from '../services/screenshare-recording.service';
-import { StateContext } from '../states/state.context';
+import {EventStore} from '../stores/event.store';
+import {AudioRecordingService} from '../services/audio-recording.service';
+import {AudioVisualizerService} from '../services/audio-visualizer.service';
+import {PromptManager} from './prompt.manager';
+import {CameraRecordingService} from '../services/camera-recording.service';
+import {ScreenshareRecordingService} from '../services/screenshare-recording.service';
+import {StateContext} from '../states/state.context';
+import {ConversationHistoryManager} from './conversation-history.manager';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,7 @@ export class ContextManager {
     private readonly promptManager: PromptManager,
     private readonly screenshareRecordingService: ScreenshareRecordingService,
     private readonly stateContext: StateContext,
+    private readonly conversationHistoryManager: ConversationHistoryManager,
   ) {
     if (isPlatformBrowser(this.platformId) && this.document.defaultView) {
       this.speechSynthesis = this.document.defaultView.speechSynthesis;
@@ -147,10 +149,13 @@ export class ContextManager {
     if (this.speechSynthesis) {
       this.speechSynthesis.cancel();
     }
+
+
     let sentenceBuffer = "";
     const sentenceRegex = /([^.!?]+[.!?])\s*/g;
 
     for await (const chunk of agentResponseStream) {
+      this.conversationHistoryManager.addChunk(chunk);
       this.eventStore.agentResponseAvailable.next(chunk);
       sentenceBuffer += chunk;
       let match;

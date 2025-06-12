@@ -22,6 +22,7 @@ import {EventStore} from './stores/event.store';
 import {ToastStore} from './stores/toast.store';
 import {ToastComponent} from './components/toast/toast.component';
 import { ConversationPage } from './pages/conversation/conversation.page';
+import {ConversationHistoryManager} from './managers/conversation-history.manager';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { ConversationPage } from './pages/conversation/conversation.page';
 
     // Managers
     ContextManager,
+    ConversationHistoryManager,
     PromptManager,
 
     // Services

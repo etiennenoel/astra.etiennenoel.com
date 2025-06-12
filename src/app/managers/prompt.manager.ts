@@ -1,5 +1,7 @@
 import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {isPlatformServer} from "@angular/common";
+import {ConversationEntry} from '../interfaces/conversation-entry.interface';
+import {ConversationHistoryManager} from './conversation-history.manager';
 
 @Injectable({
     providedIn: 'root',
@@ -8,10 +10,9 @@ export class PromptManager {
 
     private languageModel!: LanguageModel;
 
-    prompts: LanguageModelPrompt[] = []
-
     constructor(
         @Inject(PLATFORM_ID) private platformId: Object,
+        private readonly conversationHistoryManager: ConversationHistoryManager,
     ) {
         if (isPlatformServer(platformId)) {
             return;
@@ -52,7 +53,7 @@ export class PromptManager {
             });
         }
 
-        this.prompts.push(prompts);
+        this.conversationHistoryManager.addPrompts(prompts);
 
         return this.languageModel.promptStreaming(prompts);
     }

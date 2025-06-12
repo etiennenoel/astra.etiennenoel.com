@@ -16,7 +16,8 @@ import {ViewStateEnum} from '../../enums/view-state.enum';
   selector: 'app-home',
   standalone: false,
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  host:{"class": "home"},
 })
 export class HomeComponent extends BaseComponent implements OnInit {
   isPaused: boolean = false;

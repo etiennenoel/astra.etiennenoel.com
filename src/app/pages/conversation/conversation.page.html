@@ -1,4 +1,98 @@
-<div class="conversation-container">
-  <h1>Conversation</h1>
-  <p>This is where the conversation between the user and the AI agent will be displayed.</p>
+<div class="container-fluid">
+  <div class="container d-flex flex-column vh-100 p-3">
+    <div class="flex-grow-1">
+      <h1 class="text-dark">On-Device Gemini</h1>
+
+      @for (entry of conversationHistoryManager.conversationHistory; track $index) {
+        <div class="row">
+          <div class="col-12 col-md-6 offset-md-6">
+
+            @for (prompt of entry.prompts; track $index) {
+              @switch(prompt.type) {
+                @case ('text') {
+                  <div class="card bg-body-secondary border-0 rounded-5 mb-3">
+                    <div class="card-body">
+                      {{ prompt.content }}
+                    </div>
+                  </div>
+                }
+                @case ('image') {
+                  <div class="card bg-body-secondary border-0 rounded-5 mb-3">
+                    <img src="{{ prompt.content }}" class="card-img-top" alt="Image Prompt">
+                  </div>
+                }
+                @case ('audio') {
+                  <div class="card bg-body-secondary border-0 rounded-5 mb-3">
+                    <audio controls>
+                      <source src="{{ prompt.content }}" type="audio/mpeg">
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
+                }
+              }
+            }
+          </div>
+
+          <div class="col-12 d-flex flex-row align-items-start gap-4 mt-5">
+            <img src="/images/spark_icon.svg">
+
+            <div class="text-dark">
+              {{ entry.assistantResponse }}
+            </div>
+          </div>
+        </div>
+      }
+
+    </div>
+
+    <div class="form-group">
+          <textarea
+            class="form-control"
+            [(ngModel)]="newPrompt"
+            placeholder="Type your message here..."
+            rows="3"
+          ></textarea>
+    </div>
+    <button class="btn btn-primary mt-2" (click)="submitPrompt()" [disabled]="isSending">
+      {{ isSending ? 'Sending...' : 'Send' }}
+    </button>
+  </div>
 </div>
+
+<!--<div class="conversation-container">-->
+<!--  <h1>Conversation</h1>-->
+
+<!--  <div class="chat-history">-->
+<!--    <div *ngFor="let entry of conversationHistoryManager.conversationHistory" class="chat-entry">-->
+<!--      <span class="timestamp">{{ entry.timestamp | date:'shortTime' }}</span>-->
+<!--      <div class="entry-header">-->
+<!--        <span>You:</span>-->
+
+<!--      </div>-->
+<!--      <div class="entry-content">-->
+<!--        <div>{{ entry.prompts | json }}</div>-->
+<!--      </div>-->
+<!--      <div class="entry-header">-->
+<!--        <span>Assistance:</span>-->
+<!--      </div>-->
+<!--      <div class="entry-content">-->
+<!--        <div>{{ entry.assistantResponse }}</div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div *ngIf="conversationHistoryManager.conversationHistory.length === 0">-->
+<!--      <p>No conversation yet. Start by typing a message below.</p>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  <div class="prompt-input-area">-->
+<!--    <textarea-->
+<!--      class="form-control"-->
+<!--      [(ngModel)]="newPrompt"-->
+<!--      placeholder="Type your message here..."-->
+<!--      rows="3"-->
+<!--    ></textarea>-->
+<!--    <button class="btn btn-primary" (click)="submitPrompt()" [disabled]="isSending">-->
+<!--      {{ isSending ? 'Sending...' : 'Send' }}-->
+<!--    </button>-->
+<!--  </div>-->
+<!--</div>-->
