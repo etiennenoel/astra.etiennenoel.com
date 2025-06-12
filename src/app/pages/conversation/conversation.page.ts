@@ -25,6 +25,8 @@ export class ConversationPage extends BaseComponent implements OnInit {
   override ngOnInit() {
     super.ngOnInit();
 
+    this.promptManager.setup();
+
     this.subscriptions.push(this.conversationHistoryManager.conversationHistory$.subscribe(value => {
 
     }));
@@ -38,7 +40,11 @@ export class ConversationPage extends BaseComponent implements OnInit {
     this.isSending = true;
     try {
       // The promptManager.promptStreaming method now updates conversationHistory internally
-      await this.promptManager.promptStreaming(this.newPrompt);
+      const response = this.promptManager.promptStreaming(this.newPrompt);
+
+      for await(const chunk of response) {
+        this.conversationHistoryManager.addChunk(chunk);
+      }
       this.newPrompt = ''; // Clear the textarea
     } catch (error) {
       console.error("Error sending prompt:", error);

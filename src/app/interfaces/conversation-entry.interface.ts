@@ -1,5 +1,5 @@
 export interface ConversationEntry {
   timestamp: Date;
-  prompts: LanguageModelPrompt;
+  prompts: {type:"text" | "image" | "audio", content: string}[];
   assistantResponse?: string;
 }

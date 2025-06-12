@@ -145,15 +145,14 @@ export class ContextManager {
       this.speechSynthesis.cancel();
     }
 
-    let completeResponse = "";
 
     let sentenceBuffer = "";
     const sentenceRegex = /([^.!?]+[.!?])\s*/g;
 
     for await (const chunk of agentResponseStream) {
+      this.conversationHistoryManager.addChunk(chunk);
       this.eventStore.agentResponseAvailable.next(chunk);
       sentenceBuffer += chunk;
-      completeResponse += chunk;
       let match;
       while ((match = sentenceRegex.exec(sentenceBuffer)) !== null) {
         const sentence = match[1].trim();
@@ -196,8 +195,6 @@ export class ContextManager {
         }
       }
     }
-
-    this.conversationHistoryManager.addResponse(completeResponse);
 
     // Yield again
     this.capturingContext = false;
