@@ -5,7 +5,7 @@ import {BehaviorSubject} from 'rxjs';
   providedIn: 'root'
 })
 export class EventStore {
-  public readonly isPaused = new BehaviorSubject<void | boolean>(undefined);
+  public readonly isPaused = new BehaviorSubject<void | boolean>(false);
 
   public readonly captureContext = new BehaviorSubject<void | boolean>(undefined);
 
