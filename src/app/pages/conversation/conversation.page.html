@@ -4,7 +4,7 @@
       <h1 class="text-dark">On-Device Gemini</h1>
 
       @for (entry of conversationHistoryManager.conversationHistory; track $index) {
-        <div class="row">
+        <div class="row mt-5">
           <div class="col-12 col-md-6 offset-md-6">
 
             @for (prompt of entry.prompts; track $index) {
@@ -33,7 +33,7 @@
             }
           </div>
 
-          <div class="col-12 d-flex flex-row align-items-start gap-4 mt-5">
+          <div class="col-12 d-flex flex-row align-items-start gap-4 mt-3">
             <img src="/images/spark_icon.svg">
 
             <div class="text-dark">
@@ -45,7 +45,7 @@
 
     </div>
 
-    <div class="form-group">
+    <div class="form-group mt-5">
           <textarea
             class="form-control"
             [(ngModel)]="newPrompt"
@@ -53,9 +53,14 @@
             rows="3"
           ></textarea>
     </div>
-    <button class="btn btn-primary mt-2" (click)="submitPrompt()" [disabled]="isSending">
+    <div class="d-flex mt-2 gap-3">
+    <button class="btn btn-primary d-block flex-grow-1" (click)="submitPrompt()" [disabled]="isSending">
       {{ isSending ? 'Sending...' : 'Send' }}
     </button>
+    <a class="btn btn-dark d-block" routerLink="/">
+      <i class="bi bi-soundwave"></i> Start Live
+    </a>
+    </div>
   </div>
 </div>
 

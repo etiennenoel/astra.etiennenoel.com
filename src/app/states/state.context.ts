@@ -28,7 +28,7 @@ export class StateContext {
   }
 
   constructor(private readonly eventStore: EventStore) {
-    this.transition(ViewStateEnum.Paused);
+    this.transition(ViewStateEnum.MicrophoneView);
   }
 
   transition(viewState: ViewStateEnum) {

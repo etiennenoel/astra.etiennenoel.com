@@ -1,6 +1,6 @@
-import {Component, Inject, OnInit} from '@angular/core'; // Added Inject here
+import {Component, Inject, OnInit, PLATFORM_ID} from '@angular/core'; // Added Inject here
 import { BaseComponent } from '../../components/base/base.component';
-import { DOCUMENT } from '@angular/common';
+import {DOCUMENT, isPlatformServer} from '@angular/common';
 import { PromptManager } from '../../managers/prompt.manager';
 import {ConversationHistoryManager} from '../../managers/conversation-history.manager'; // Import PromptManager
 
@@ -15,6 +15,7 @@ export class ConversationPage extends BaseComponent implements OnInit {
   public isSending: boolean = false;
 
   constructor(
+    @Inject(PLATFORM_ID) private readonly platformId: Object,
     @Inject(DOCUMENT) document: Document,
     public promptManager: PromptManager,
     public readonly conversationHistoryManager: ConversationHistoryManager,
@@ -24,6 +25,10 @@ export class ConversationPage extends BaseComponent implements OnInit {
 
   override ngOnInit() {
     super.ngOnInit();
+
+    if (isPlatformServer(this.platformId)) {
+      return;
+    }
 
     this.promptManager.setup();
 
