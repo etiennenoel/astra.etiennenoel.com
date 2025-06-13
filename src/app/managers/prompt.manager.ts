@@ -91,7 +91,7 @@ DO NOT USE ASTERISKS AND ONLY PLAIN TEXT. BE HUMORISTIC. BE VERY BRIEF. LIKE, VE
 
         return this.languageModel.promptStreaming(prompts, {
           // @ts-expect-error
-          responseConstraint: /^([^.]+\.)(\s[^.]+\.){0,5}$/
+          responseConstraint: /^((?:[^.?!*]*[a-zA-Z][^.?!*]*[.?!]\s*){1,7})$/
         });
     }
 
