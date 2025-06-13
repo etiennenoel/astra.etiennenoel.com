@@ -24,6 +24,7 @@ import { HomePage } from './pages/home/home.page';
 import {ConversationHistoryManager} from './managers/conversation-history.manager';
 import {AudioProcessor} from './processors/audio.processor';
 import {DetectionParametersProvider} from './providers/detection-parameters.provider';
+import {SpeechSynthesisService} from './services/speech-synthesis.service';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import {DetectionParametersProvider} from './providers/detection-parameters.prov
     AudioVisualizerService,
     CameraRecordingService,
     ScreenshareRecordingService, // Added this line
+    SpeechSynthesisService,
 
     // Stores
     EventStore,
