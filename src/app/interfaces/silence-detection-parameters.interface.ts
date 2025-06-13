@@ -1,7 +1,7 @@
 /**
  * Parameters for the advanced silence detection algorithm.
  */
-interface SilenceDetectionParameters {
+export interface SilenceDetectionParameters {
   /**
    * The RMS threshold below which silence *might* be detected (entering silence state).
    * Range: 0.0 to 1.0. Lower values mean less sensitive to noise.

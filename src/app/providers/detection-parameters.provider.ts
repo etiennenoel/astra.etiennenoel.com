@@ -6,53 +6,53 @@ import {
   SILENCE_EXIT_THRESHOLD_RMS, SILENCE_EXIT_THRESHOLD_ZCR, SILENT_DURATION_MS, ZCR_HISTORY_LENGTH
 } from '../constants/silence-detection-parameters.constants';
 import {Subscription} from 'rxjs';
+import {SilenceDetectionParameters} from '../interfaces/silence-detection-parameters.interface';
 
 @Injectable({
   providedIn: "root",
 })
 export class DetectionParametersProvider implements SilenceDetectionParameters {
-
   get silenceEntryThresholdRMS(): number {
     return this.silenceEntryThresholdRMSFormControl.value ?? SILENCE_ENTRY_THRESHOLD_RMS;
   }
 
-  silenceEntryThresholdRMSFormControl = new FormControl<number>(this.silenceEntryThresholdRMS);
+  silenceEntryThresholdRMSFormControl = new FormControl<number>(SILENCE_ENTRY_THRESHOLD_RMS);
 
   get silenceExitThresholdRMS(): number {
     return this.silenceExitThresholdRMSFormControl.value ?? SILENCE_EXIT_THRESHOLD_RMS;
   }
 
-  silenceExitThresholdRMSFormControl = new FormControl<number>(this.silenceExitThresholdRMS);
+  silenceExitThresholdRMSFormControl = new FormControl<number>(SILENCE_EXIT_THRESHOLD_RMS);
 
   get silenceEntryThresholdZCR(): number {
     return this.silenceEntryThresholdZCRFormControl.value ?? SILENCE_ENTRY_THRESHOLD_ZCR;
   }
 
-  silenceEntryThresholdZCRFormControl = new FormControl<number>(this.silenceEntryThresholdZCR);
+  silenceEntryThresholdZCRFormControl = new FormControl<number>(SILENCE_ENTRY_THRESHOLD_ZCR);
 
   get silenceExitThresholdZCR(): number {
     return this.silenceExitThresholdZCRFormControl.value ?? SILENCE_EXIT_THRESHOLD_ZCR;
   }
 
-  silenceExitThresholdZCRFormControl = new FormControl<number>(this.silenceExitThresholdZCR);
+  silenceExitThresholdZCRFormControl = new FormControl<number>(SILENCE_EXIT_THRESHOLD_ZCR);
 
   get silenceDurationMs(): number {
     return this.silenceDurationMsFormControl.value ?? SILENT_DURATION_MS;
   }
 
-  silenceDurationMsFormControl = new FormControl<number>(this.silenceDurationMs);
+  silenceDurationMsFormControl = new FormControl<number>(SILENT_DURATION_MS);
 
   get rmsHistoryLength(): number {
     return this.rmsHistoryLengthFormControl.value ?? RMS_HISTORY_LENGTH;
   }
 
-  rmsHistoryLengthFormControl = new FormControl<number>(this.rmsHistoryLength);
+  rmsHistoryLengthFormControl = new FormControl<number>(RMS_HISTORY_LENGTH);
 
   get zcrHistoryLength(): number {
     return this.zcrHistoryLengthFormControl.value ?? ZCR_HISTORY_LENGTH;
   }
 
-  zcrHistoryLengthFormControl = new FormControl<number>(this.zcrHistoryLength);
+  zcrHistoryLengthFormControl = new FormControl<number>(ZCR_HISTORY_LENGTH);
 
   subscriptions: Subscription[] = [];
 

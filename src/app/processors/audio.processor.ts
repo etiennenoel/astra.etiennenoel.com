@@ -15,18 +15,13 @@ export class AudioProcessor {
   private rmsHistory: number[] = [];
   private zcrHistory: number[] = [];
 
+  private audioContext?: AudioContext;
+  private animationFrameId?: number;
+
   constructor(
-    audioContext: AudioContext,
-    sourceNode: AudioNode,
     private readonly eventStore: EventStore,
     private readonly detectionParams: DetectionParametersProvider
   ) {
-    this.analyserNode = audioContext.createAnalyser();
-    this.analyserNode.fftSize = 2048; // A common size, determines dataArray length
-    this.dataArray = new Uint8Array(this.analyserNode.fftSize);
-
-    sourceNode.connect(this.analyserNode);
-
     // Initial fill of history arrays with zeros
     for (let i = 0; i < this.detectionParams.rmsHistoryLength; i++) {
       this.rmsHistory.push(0);
@@ -170,27 +165,33 @@ export class AudioProcessor {
   }
 
   // Example of how to start monitoring (e.g., in a requestAnimationFrame loop)
-  public startMonitoring(): void {
+  public startMonitoring(audioContext: AudioContext,
+                         analyserNode: AnalyserNode
+                         ): void {
+    this.audioContext = audioContext;
+    this.analyserNode = analyserNode
+    this.analyserNode.fftSize = 2048; // A common size, determines dataArray length
+    this.dataArray = new Uint8Array(this.analyserNode.fftSize);
+
     const loop = () => {
       this.betterCheckForSilence();
-      requestAnimationFrame(loop);
+      this.animationFrameId = requestAnimationFrame(loop);
     };
-    requestAnimationFrame(loop);
+    this.animationFrameId = requestAnimationFrame(loop);
   }
 
   // Example of how to stop monitoring
   public stopMonitoring(): void {
-    // In a real application, you'd need to manage the animation frame ID
-    // to cancel it properly. For simplicity here, it's illustrative.
-    console.log("Monitoring stopped (manual cancellation logic needed).");
+    if(this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId)
+      this.animationFrameId = undefined;
+    }
+
+    this.disconnect()
   }
 
   // Dummy method to clean up (e.g., disconnect analyser node)
   public disconnect(): void {
-    if (this.analyserNode) {
-      this.analyserNode.disconnect();
-    }
-    this.analyserNode = null;
     this.dataArray = null;
   }
 }
