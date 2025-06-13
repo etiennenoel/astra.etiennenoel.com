@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms'; // Added this line
-
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import {RootComponent} from './components/root/root.component';
 import { LivePage } from './pages/live/live.page';
@@ -24,6 +23,9 @@ import {ToastComponent} from './components/toast/toast.component';
 import { HomePage } from './pages/home/home.page';
 import {ConversationHistoryManager} from './managers/conversation-history.manager';
 import { AudioParametersFormComponent } from './components/audio-parameters-form/audio-parameters-form.component';
+import {AudioProcessor} from './processors/audio.processor';
+import {DetectionParametersProvider} from './providers/detection-parameters.provider';
+import {SpeechSynthesisService} from './services/speech-synthesis.service';
 
 @NgModule({
   declarations: [
@@ -56,15 +58,21 @@ import { AudioParametersFormComponent } from './components/audio-parameters-form
     ConversationHistoryManager,
     PromptManager,
 
+    // Processors
+    AudioProcessor,
+
     // Services
     AudioRecordingService,
     AudioVisualizerService,
     CameraRecordingService,
     ScreenshareRecordingService, // Added this line
+    SpeechSynthesisService,
 
     // Stores
     EventStore,
     ToastStore,
+
+    DetectionParametersProvider,
   ],
   bootstrap: [RootComponent]
 })

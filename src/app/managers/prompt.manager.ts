@@ -14,9 +14,6 @@ export class PromptManager {
         @Inject(PLATFORM_ID) private platformId: Object,
         private readonly conversationHistoryManager: ConversationHistoryManager,
     ) {
-        if (isPlatformServer(platformId)) {
-            return;
-        }
     }
 
     async setup () {

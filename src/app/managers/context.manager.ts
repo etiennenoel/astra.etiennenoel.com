@@ -8,6 +8,7 @@ import {CameraRecordingService} from '../services/camera-recording.service';
 import {ScreenshareRecordingService} from '../services/screenshare-recording.service';
 import {StateContext} from '../states/state.context';
 import {ConversationHistoryManager} from './conversation-history.manager';
+import {SpeechSynthesisService} from '../services/speech-synthesis.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,7 @@ import {ConversationHistoryManager} from './conversation-history.manager';
 export class ContextManager {
 
   stream?: MediaStream;
-  private speechSynthesis: SpeechSynthesis | null = null;
-  private selectedVoice: SpeechSynthesisVoice | null = null;
+
   capturingContext: boolean = false;
 
   detectSilence: boolean = false;
@@ -32,32 +32,8 @@ export class ContextManager {
     private readonly screenshareRecordingService: ScreenshareRecordingService,
     private readonly stateContext: StateContext,
     private readonly conversationHistoryManager: ConversationHistoryManager,
+    private readonly speechSynthesisService:SpeechSynthesisService,
   ) {
-    if (isPlatformBrowser(this.platformId) && this.document.defaultView) {
-      this.speechSynthesis = this.document.defaultView.speechSynthesis;
-      if (this.speechSynthesis) {
-        this.speechSynthesis.onvoiceschanged = () => {
-          const voices = this.speechSynthesis!.getVoices();
-          const britishVoices = voices.filter(voice => voice.lang === 'en-GB');
-
-          if (britishVoices.length > 0) {
-            this.selectedVoice = britishVoices.find(voice => /female|woman/i.test(voice.name)) || null;
-            if (this.selectedVoice) {
-              console.log(`Found female British voice: ${this.selectedVoice.name}`);
-            } else {
-              // Fallback to the first available British voice if no female is found
-              this.selectedVoice = britishVoices[0];
-              console.warn(`No female British voice found. Using first available en-GB voice: ${this.selectedVoice.name}`);
-            }
-          } else {
-            this.selectedVoice = null;
-            console.warn('No British English (en-GB) voices found. Using default voice.');
-          }
-        };
-        // Trigger loading voices if they haven't been loaded yet for some browsers
-        this.speechSynthesis.getVoices();
-      }
-    }
     this.eventStore.captureContext.subscribe(value => {
       if (value) {
         this.captureContext();
@@ -87,6 +63,7 @@ export class ContextManager {
     if (isPlatformServer(this.platformId)) {
       return;
     }
+
     this.promptManager.setup();
     this.stream = await navigator.mediaDevices.getUserMedia({
       audio: {
@@ -104,10 +81,7 @@ export class ContextManager {
     }
 
     this.audioRecordingService.stopRecording();
-
-    if (this.speechSynthesis) {
-      this.speechSynthesis.cancel();
-    }
+    this.speechSynthesisService.stop();
   }
 
   async captureContext() {
@@ -152,9 +126,7 @@ export class ContextManager {
 
     const agentResponseStream = this.promptManager.promptStreaming(transcribedText, imagePromptContent);
 
-    if (this.speechSynthesis) {
-      this.speechSynthesis.cancel();
-    }
+    this.speechSynthesisService.stop();
 
 
     let sentenceBuffer = "";
@@ -163,49 +135,10 @@ export class ContextManager {
     for await (const chunk of agentResponseStream) {
       this.conversationHistoryManager.addChunk(chunk);
       this.eventStore.agentResponseAvailable.next(chunk);
-      sentenceBuffer += chunk;
-      let match;
-      while ((match = sentenceRegex.exec(sentenceBuffer)) !== null) {
-        const sentence = match[1].trim();
-        if (sentence) {
-          if (this.speechSynthesis) {
-            try {
-              const utterance = new SpeechSynthesisUtterance(sentence);
-              if (this.selectedVoice) {
-                utterance.voice = this.selectedVoice;
-              }
-              utterance.rate = 1; // Adjust rate as desired (1.0 is default)
-              utterance.pitch = 1;
-              this.speechSynthesis.speak(utterance);
-            } catch (error) {
-              console.error('Speech synthesis error:', error);
-            }
-          }
-        }
-        sentenceBuffer = sentenceBuffer.substring(match.index + match[0].length);
-        // Reset lastIndex since we modified the string
-        sentenceRegex.lastIndex = 0;
-      }
+      this.speechSynthesisService.accumulateText(chunk);
     }
 
-    // Process any remaining text in the buffer
-    const remainingText = sentenceBuffer.trim();
-    if (remainingText) {
-      this.eventStore.agentResponseAvailable.next(remainingText);
-      if (this.speechSynthesis) {
-        try {
-          const utterance = new SpeechSynthesisUtterance(remainingText);
-          if (this.selectedVoice) {
-            utterance.voice = this.selectedVoice;
-          }
-          utterance.rate = 0.5; // Adjust rate as desired (1.0 is default)
-          utterance.pitch = 1;
-          this.speechSynthesis.speak(utterance);
-        } catch (error) {
-          console.error('Speech synthesis error:', error);
-        }
-      }
-    }
+    this.speechSynthesisService.responseComplete()
 
     // Yield again
     this.capturingContext = false;
