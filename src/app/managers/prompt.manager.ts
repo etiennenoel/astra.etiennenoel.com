@@ -25,15 +25,11 @@ export class PromptManager {
                 {type: "text"},
                 {type: "image"},
                 {type: "audio"},
-            ]
-        })
-    }
-
-    promptStreaming(prompt: string, image?: ImageBitmap): ReadableStream {
-        const prompts: LanguageModelPrompt = [
+            ],
+          initialPrompts: [
             {
-                role: "assistant",
-                content: `You are a friendly and insightful AI assistant integrated into a voice-first application. Your name is Gemini. Your primary function is to provide brief, clear, and conversational answers that are easy to understand when read aloud.
+              role: "assistant",
+              content: `You are a friendly and insightful AI assistant integrated into a voice-first application. Your name is Gemini. Your primary function is to provide brief, clear, and conversational answers that are easy to understand when read aloud.
 
 **Core Directives:**
 
@@ -58,8 +54,17 @@ export class PromptManager {
 
 **Correct Response (Acknowledges, provides more detail, and continues the conversation):** "That sounds fun! The forecast for this weekend is looking sunny with highs in the mid-60s. Would you like some ideas for outdoor activities?"
 
-By adhering to these directives, you will create a seamless and engaging user experience that feels like a natural conversation, all while operating efficiently on-device.`,
+By adhering to these directives, you will create a seamless and engaging user experience that feels like a natural conversation, all while operating efficiently on-device.
+
+DO NOT USE ASTERISKS.
+`,
             },
+          ]
+        })
+    }
+
+    promptStreaming(prompt: string, image?: ImageBitmap): ReadableStream {
+        const prompts: LanguageModelPrompt = [
             {
                 role: "user",
                 content: prompt,

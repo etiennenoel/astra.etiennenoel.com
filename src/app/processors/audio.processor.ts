@@ -160,6 +160,8 @@ export class AudioProcessor {
           console.log(`Sound detected, resetting silence timer. RMS=${averagedRMS.toFixed(3)}, ZCR=${averagedZCR.toFixed(3)}`);
         }
         this.silenceStartTime = undefined;
+        this.eventStore.silenceDetected.next(false);
+
       }
     }
   }

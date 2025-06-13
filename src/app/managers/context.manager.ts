@@ -21,6 +21,8 @@ export class ContextManager {
 
   detectSilence: boolean = false;
 
+  hasSeenFirstSilence = false;
+
   constructor(
     @Inject(DOCUMENT) private document: Document,
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -42,7 +44,16 @@ export class ContextManager {
 
     this.eventStore.silenceDetected.subscribe(value => {
       if (value && this.detectSilence) {
-        this.captureContext();
+        if(this.hasSeenFirstSilence) {
+          this.captureContext();
+        } else {
+          this.hasSeenFirstSilence = true;
+        }
+      }
+
+      if (!value) {
+        console.log("Should stop speaking, the user is speaking");
+        this.speechSynthesisService.stop();
       }
     })
 

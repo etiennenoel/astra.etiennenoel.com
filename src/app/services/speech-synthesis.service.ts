@@ -39,6 +39,12 @@ export class SpeechSynthesisService {
         // Trigger loading voices if they haven't been loaded yet for some browsers
         this.speechSynthesis.getVoices();
       }
+
+      this.document.defaultView.addEventListener('beforeunload', () => {
+        if (this.speechSynthesis?.speaking) { // Check if synthesis is active
+          this.speechSynthesis.cancel();
+        }
+      });
     }
   }
 
