@@ -51,10 +51,10 @@ export class ContextManager {
         }
       }
 
-      if (!value) {
-        console.log("Should stop speaking, the user is speaking");
-        this.speechSynthesisService.stop();
-      }
+      // if (!value) {
+      //   console.log("Should stop speaking, the user is speaking");
+      //   this.speechSynthesisService.stop();
+      // }
     })
 
     this.eventStore.isPaused.subscribe(value => {
