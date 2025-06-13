@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {DetectionParametersProvider} from '../../providers/detection-parameters.provider';
 
 @Component({
   selector: 'app-audio-parameters-form',
@@ -7,4 +8,6 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AudioParametersFormComponent {
+  constructor(protected readonly detectionParametersProvider: DetectionParametersProvider) {
+  }
 }
