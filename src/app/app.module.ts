@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms'; // Added this line
-
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import {RootComponent} from './components/root/root.component';
 import { LivePage } from './pages/live/live.page';
@@ -23,6 +22,8 @@ import {ToastStore} from './stores/toast.store';
 import {ToastComponent} from './components/toast/toast.component';
 import { HomePage } from './pages/home/home.page';
 import {ConversationHistoryManager} from './managers/conversation-history.manager';
+import {AudioProcessor} from './processors/audio.processor';
+import {DetectionParametersProvider} from './providers/detection-parameters.provider';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,9 @@ import {ConversationHistoryManager} from './managers/conversation-history.manage
     ConversationHistoryManager,
     PromptManager,
 
+    // Processors
+    AudioProcessor,
+
     // Services
     AudioRecordingService,
     AudioVisualizerService,
@@ -63,6 +67,8 @@ import {ConversationHistoryManager} from './managers/conversation-history.manage
     // Stores
     EventStore,
     ToastStore,
+
+    DetectionParametersProvider,
   ],
   bootstrap: [RootComponent]
 })

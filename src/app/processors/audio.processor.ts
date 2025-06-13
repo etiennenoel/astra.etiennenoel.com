@@ -1,11 +1,14 @@
+import {EventStore} from '../stores/event.store';
+import {Inject, Injectable} from '@angular/core';
+import {DetectionParametersProvider} from '../providers/detection-parameters.provider';
+
 /**
  * A class to handle audio processing and advanced silence detection.
  */
-class AudioProcessor {
+@Injectable()
+export class AudioProcessor {
   private analyserNode: AnalyserNode | null = null;
   private dataArray: Uint8Array | null = null;
-  private eventStore: EventStore; // This would be injected or initialized
-  private detectionParams: SilenceDetectionParameters;
 
   private silenceStartTime: number | undefined;
   private isCurrentlySilent: boolean = false; // Tracks the current state of silence
@@ -15,12 +18,9 @@ class AudioProcessor {
   constructor(
     audioContext: AudioContext,
     sourceNode: AudioNode,
-    eventStore: EventStore,
-    params: SilenceDetectionParameters
+    private readonly eventStore: EventStore,
+    private readonly detectionParams: DetectionParametersProvider
   ) {
-    this.eventStore = eventStore;
-    this.detectionParams = params;
-
     this.analyserNode = audioContext.createAnalyser();
     this.analyserNode.fftSize = 2048; // A common size, determines dataArray length
     this.dataArray = new Uint8Array(this.analyserNode.fftSize);
