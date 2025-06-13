@@ -1,0 +1,161 @@
+// --- Usage Example ---
+// This part demonstrates how to use the AudioProcessor class.
+// In a real application, you'd integrate this with your Web Audio API setup.
+
+// Mock EventStore for demonstration
+const mockEventStore: EventStore = {
+  silenceDetected: new Subject<boolean>()
+};
+
+mockEventStore.silenceDetected.subscribe(isSilent => {
+  console.log(`Event: silenceDetected.next(${isSilent})`);
+  const statusElement = document.getElementById('status');
+  if (statusElement) {
+    statusElement.textContent = isSilent ? 'Status: Silence Detected!' : 'Status: Sound Active';
+    statusElement.className = isSilent ? 'text-red-600 font-bold' : 'text-green-600 font-bold';
+  }
+});
+
+// Example parameters. You'll need to tune these for your specific environment.
+const detectionParameters: SilenceDetectionParameters = {
+  silenceEntryThresholdRMS: 0.005, // RMS below this to start counting for silence
+  silenceExitThresholdRMS: 0.01,  // RMS above this to exit silence
+  silenceEntryThresholdZCR: 0.01, // ZCR below this to start counting for silence
+  silenceExitThresholdZCR: 0.02,  // ZCR above this to exit silence
+  silenceDurationMs: 1000,       // 1 second of continuous silence required
+  rmsHistoryLength: 5,           // Average RMS over 5 recent frames
+  zcrHistoryLength: 5,           // Average ZCR over 5 recent frames
+};
+
+// HTML for demonstration
+document.addEventListener('DOMContentLoaded', () => {
+  const appDiv = document.getElementById('app');
+  if (appDiv) {
+    appDiv.innerHTML = `
+      <div class="p-8 max-w-md mx-auto bg-white rounded-xl shadow-lg space-y-4">
+        <h1 class="text-2xl font-bold text-gray-900 text-center">Advanced Silence Detector</h1>
+        <p class="text-gray-700 text-center">
+          Monitor your microphone for silence using RMS, Zero-Crossing Rate, history averaging, and hysteresis.
+        </p>
+        <div class="flex flex-col items-center space-y-4">
+          <button id="startBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-300 ease-in-out">
+            Start Monitoring
+          </button>
+          <button id="stopBtn" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-300 ease-in-out">
+            Stop Monitoring
+          </button>
+          <div id="status" class="text-lg mt-4 p-2 rounded-md bg-gray-100 w-full text-center">
+            Status: Not Monitoring
+          </div>
+          <div id="debug-info" class="text-sm text-gray-500 mt-2 w-full text-left">
+            <p>RMS: <span id="current-rms">0.000</span> (Avg: <span id="avg-rms">0.000</span>)</p>
+            <p>ZCR: <span id="current-zcr">0.000</span> (Avg: <span id="avg-zcr">0.000</span>)</p>
+            <p>Silence Timer: <span id="silence-timer">N/A</span></p>
+          </div>
+        </div>
+        <div class="mt-6 text-xs text-gray-500">
+            <p><strong>Parameters:</strong></p>
+            <ul class="list-disc list-inside">
+                <li>RMS Entry: ${detectionParameters.silenceEntryThresholdRMS.toFixed(3)}</li>
+                <li>RMS Exit: ${detectionParameters.silenceExitThresholdRMS.toFixed(3)}</li>
+                <li>ZCR Entry: ${detectionParameters.silenceEntryThresholdZCR.toFixed(3)}</li>
+                <li>ZCR Exit: ${detectionParameters.silenceExitThresholdZCR.toFixed(3)}</li>
+                <li>Duration: ${detectionParameters.silenceDurationMs}ms</li>
+                <li>RMS History: ${detectionParameters.rmsHistoryLength} frames</li>
+                <li>ZCR History: ${detectionParameters.zcrHistoryLength} frames</li>
+            </ul>
+        </div>
+      </div>
+    `;
+  }
+
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const currentRmsSpan = document.getElementById('current-rms');
+  const avgRmsSpan = document.getElementById('avg-rms');
+  const currentZcrSpan = document.getElementById('current-zcr');
+  const avgZcrSpan = document.getElementById('avg-zcr');
+  const silenceTimerSpan = document.getElementById('silence-timer');
+  const statusElement = document.getElementById('status');
+
+  let audioContext: AudioContext | null = null;
+  let audioProcessor: AudioProcessor | null = null;
+  let animationFrameId: number | null = null;
+
+  const updateDebugInfo = (processor: AudioProcessor) => {
+    // This is a bit of a hack to access private members for debugging.
+    // In a real app, you might expose read-only properties or separate debug logging.
+    const anyProcessor = processor as any;
+    if (currentRmsSpan) currentRmsSpan.textContent = anyProcessor.currentRMS?.toFixed(3) || '0.000';
+    if (avgRmsSpan) avgRmsSpan.textContent = anyProcessor.getAverage(anyProcessor.rmsHistory)?.toFixed(3) || '0.000';
+    if (currentZcrSpan) currentZcrSpan.textContent = anyProcessor.currentZCR?.toFixed(3) || '0.000';
+    if (avgZcrSpan) avgZcrSpan.textContent = anyProcessor.getAverage(anyProcessor.zcrHistory)?.toFixed(3) || '0.000';
+    if (silenceTimerSpan) {
+      if (anyProcessor.silenceStartTime !== undefined) {
+        const timeElapsed = Date.now() - anyProcessor.silenceStartTime;
+        silenceTimerSpan.textContent = `${timeElapsed}ms / ${detectionParameters.silenceDurationMs}ms`;
+      } else {
+        silenceTimerSpan.textContent = 'N/A';
+      }
+    }
+  };
+
+
+  startBtn?.addEventListener('click', async () => {
+    if (audioProcessor) {
+      console.log('Already monitoring.');
+      return;
+    }
+
+    try {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+
+      // Request microphone access
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const source = audioContext.createMediaStreamSource(stream);
+
+      audioProcessor = new AudioProcessor(audioContext, source, mockEventStore, detectionParameters);
+
+      // Start the detection loop
+      const loop = () => {
+        audioProcessor?.betterCheckForSilence();
+        updateDebugInfo(audioProcessor!); // Update debug info
+        animationFrameId = requestAnimationFrame(loop);
+      };
+      animationFrameId = requestAnimationFrame(loop);
+
+      if (statusElement) statusElement.textContent = 'Status: Monitoring...';
+      console.log('Started audio monitoring.');
+    } catch (error) {
+      console.error('Error starting audio monitoring:', error);
+      if (statusElement) statusElement.textContent = 'Status: Error - ' + error.message;
+    }
+  });
+
+  stopBtn?.addEventListener('click', () => {
+    if (audioProcessor) {
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+      audioProcessor.disconnect();
+      audioProcessor = null;
+      if (audioContext) {
+        audioContext.close(); // Close audio context to release mic
+        audioContext = null;
+      }
+      if (statusElement) statusElement.textContent = 'Status: Not Monitoring';
+      console.log('Stopped audio monitoring.');
+      // Reset debug info
+      if (currentRmsSpan) currentRmsSpan.textContent = '0.000';
+      if (avgRmsSpan) avgRmsSpan.textContent = '0.000';
+      if (currentZcrSpan) currentZcrSpan.textContent = '0.000';
+      if (avgZcrSpan) avgZcrSpan.textContent = '0.000';
+      if (silenceTimerSpan) silenceTimerSpan.textContent = 'N/A';
+    } else {
+      console.log('Not currently monitoring.');
+    }
+  });
+});
