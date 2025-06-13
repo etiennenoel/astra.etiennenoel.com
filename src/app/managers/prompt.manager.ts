@@ -28,6 +28,8 @@ export class PromptManager {
                 {type: "image"},
                 {type: "audio"},
             ],
+          topK: 2,
+          temperature: 1,
           initialPrompts: [
             {
               role: "assistant",
@@ -58,7 +60,7 @@ export class PromptManager {
 
 By adhering to these directives, you will create a seamless and engaging user experience that feels like a natural conversation, all while operating efficiently on-device.
 
-DO NOT USE ASTERISKS AND ONLY PLAIN TEXT. BE HUMORISTIC. BE VERY BRIEF. LIKE, VERY VERY BRIEF.
+DO NOT USE ASTERISKS AND ONLY PLAIN TEXT. BE HUMORISTIC. BE VERY BRIEF. LIKE, VERY VERY BRIEF, maximum 3 sentences.
 `,
             },
           ]
@@ -87,7 +89,10 @@ DO NOT USE ASTERISKS AND ONLY PLAIN TEXT. BE HUMORISTIC. BE VERY BRIEF. LIKE, VE
 
         this.conversationHistoryManager.addPrompts(prompts);
 
-        return this.languageModel.promptStreaming(prompts);
+        return this.languageModel.promptStreaming(prompts, {
+          // @ts-expect-error
+          responseConstraint: /^([^.]+\.)(\s[^.]+\.){0,5}$/
+        });
     }
 
     async transcribe(audioBlob: Blob): Promise<ReadableStream> {

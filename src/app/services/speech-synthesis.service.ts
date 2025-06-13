@@ -58,11 +58,15 @@ export class SpeechSynthesisService {
         if (this.speechSynthesis) {
           try {
             const self = this;
-            const utterance = new SpeechSynthesisUtterance(sentence);
+
+            // Remove all asterisks from the sentence
+            const cleanSentence = sentence.replace(/\*/g, '');
+
+            const utterance = new SpeechSynthesisUtterance(cleanSentence);
             if (this.selectedVoice) {
               utterance.voice = this.selectedVoice;
             }
-            utterance.rate = 1; // Adjust rate as desired (1.0 is default)
+            utterance.rate = 1.25; // Adjust rate as desired (1.0 is default)
             utterance.pitch = 1;
             this.speechSynthesis.speak(utterance);
           } catch (error) {
@@ -84,11 +88,14 @@ export class SpeechSynthesisService {
       if (this.speechSynthesis) {
         try {
           const self = this;
-          const utterance = new SpeechSynthesisUtterance(remainingText);
+
+          // Remove all asterisks from the sentence
+          const cleanSentence = remainingText.replace(/\*/g, '');
+          const utterance = new SpeechSynthesisUtterance(cleanSentence);
           if (this.selectedVoice) {
             utterance.voice = this.selectedVoice;
           }
-          utterance.rate = 0.5; // Adjust rate as desired (1.0 is default)
+          utterance.rate = 1.25; // Adjust rate as desired (1.0 is default)
           utterance.pitch = 1;
           utterance.onend = (event) => {
             self.eventStore.speechCompleted.next(true);
@@ -100,6 +107,8 @@ export class SpeechSynthesisService {
           console.error('Speech synthesis error:', error);
         }
       }
+    } else {
+      this.eventStore.speechCompleted.next(true);
     }
   }
 

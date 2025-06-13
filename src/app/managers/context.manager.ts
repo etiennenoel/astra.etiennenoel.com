@@ -58,8 +58,9 @@ export class ContextManager {
     })
 
     this.eventStore.speechCompleted.subscribe(value => {
+      console.log("Speech completed");
       if(value) {
-        this.stopListening();
+        this.audioRecordingService.stopRecordingWithoutBlob();
         this.startListening();
       }
     })
@@ -78,6 +79,7 @@ export class ContextManager {
   }
 
   async startListening() {
+    console.log("Starting listening");
     if (isPlatformServer(this.platformId)) {
       return;
     }
@@ -89,16 +91,17 @@ export class ContextManager {
         noiseSuppression: true,
       },
     });
-    this.audioVisualizerService.visualize(this.stream);
+    //this.audioVisualizerService.visualize(this.stream);
     this.audioRecordingService.startRecording(this.stream)
   }
 
   async stopListening() {
+    console.log("Stopping listening");
     if (!this.stream) {
       return;
     }
 
-    this.audioRecordingService.stopRecording();
+    await this.audioRecordingService.stopRecording();
     this.speechSynthesisService.stop();
   }
 
