@@ -21,8 +21,6 @@ export class ContextManager {
 
   detectSilence: boolean = false;
 
-  hasSeenFirstSilence = false;
-
   constructor(
     @Inject(DOCUMENT) private document: Document,
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -44,11 +42,7 @@ export class ContextManager {
 
     this.eventStore.silenceDetected.subscribe(value => {
       if (value && this.detectSilence) {
-        if(this.hasSeenFirstSilence) {
           this.captureContext();
-        } else {
-          this.hasSeenFirstSilence = true;
-        }
       }
 
       // if (!value) {

@@ -11,7 +11,7 @@ export class AudioProcessor {
   private dataArray: Uint8Array | null = null;
 
   private silenceStartTime: number | undefined;
-  private isCurrentlySilent: boolean = false; // Tracks the current state of silence
+  private isCurrentlySilent: boolean = true; // Tracks the current state of silence
   private rmsHistory: number[] = [];
   private zcrHistory: number[] = [];
 
