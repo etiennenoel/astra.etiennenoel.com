@@ -1,4 +1,4 @@
-import {Inject, Injectable} from '@angular/core';
+import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {
   RMS_HISTORY_LENGTH,
@@ -7,6 +7,7 @@ import {
 } from '../constants/silence-detection-parameters.constants';
 import {Subscription} from 'rxjs';
 import {SilenceDetectionParameters} from '../interfaces/silence-detection-parameters.interface';
+import {isPlatformBrowser, isPlatformServer} from '@angular/common';
 
 @Injectable({
   providedIn: "root",
@@ -56,54 +57,60 @@ export class DetectionParametersProvider implements SilenceDetectionParameters {
 
   subscriptions: Subscription[] = [];
 
-  constructor() {
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+  ) {
+    if (isPlatformServer(this.platformId)) {
+      return;
+    }
+
     this.subscriptions.push(this.silenceEntryThresholdRMSFormControl.valueChanges.subscribe(value => {
-        if (value === null || value === undefined) {
-          return;
-        }
-        localStorage.setItem("silenceEntryThresholdRMS", value.toString());
-      }));
+      if (value === null || value === undefined) {
+        return;
+      }
+      localStorage.setItem("silenceEntryThresholdRMS", value.toString());
+    }));
     this.subscriptions.push(this.silenceExitThresholdRMSFormControl.valueChanges.subscribe(value => {
-        if (value === null || value === undefined) {
-          return;
-        }
-        localStorage.setItem("silenceExitThresholdRMS", value.toString());
-      }));
+      if (value === null || value === undefined) {
+        return;
+      }
+      localStorage.setItem("silenceExitThresholdRMS", value.toString());
+    }));
 
     this.subscriptions.push(this.silenceEntryThresholdZCRFormControl.valueChanges.subscribe(value => {
-        if (value === null || value === undefined) {
-          return;
-        }
-        localStorage.setItem("silenceEntryThresholdZCR", value.toString());
-      }));
+      if (value === null || value === undefined) {
+        return;
+      }
+      localStorage.setItem("silenceEntryThresholdZCR", value.toString());
+    }));
 
     this.subscriptions.push(this.silenceExitThresholdZCRFormControl.valueChanges.subscribe(value => {
-        if (value === null || value === undefined) {
-          return;
-        }
-        localStorage.setItem("silenceExitThresholdZCR", value.toString());
-      }));
+      if (value === null || value === undefined) {
+        return;
+      }
+      localStorage.setItem("silenceExitThresholdZCR", value.toString());
+    }));
 
     this.subscriptions.push(this.silenceDurationMsFormControl.valueChanges.subscribe(value => {
-        if (value === null || value === undefined) {
-          return;
-        }
-        localStorage.setItem("silenceDurationMs", value.toString());
-      }));
+      if (value === null || value === undefined) {
+        return;
+      }
+      localStorage.setItem("silenceDurationMs", value.toString());
+    }));
 
     this.subscriptions.push(this.rmsHistoryLengthFormControl.valueChanges.subscribe(value => {
-        if (value === null || value === undefined) {
-          return;
-        }
-        localStorage.setItem("rmsHistoryLength", value.toString());
-      }));
+      if (value === null || value === undefined) {
+        return;
+      }
+      localStorage.setItem("rmsHistoryLength", value.toString());
+    }));
 
     this.subscriptions.push(this.zcrHistoryLengthFormControl.valueChanges.subscribe(value => {
-        if (value === null || value === undefined) {
-          return;
-        }
-        localStorage.setItem("zcrHistoryLength", value.toString());
-      }));
+      if (value === null || value === undefined) {
+        return;
+      }
+      localStorage.setItem("zcrHistoryLength", value.toString());
+    }));
 
     this.loadLocalStorageOverrides();
   }
