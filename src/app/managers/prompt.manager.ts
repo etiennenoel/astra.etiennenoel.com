@@ -17,9 +17,11 @@ export class PromptManager {
     }
 
     async setup () {
-        if (isPlatformServer(this.platformId)) {
+      console.log("Setup PromptManager;")
+        if (isPlatformServer(this.platformId) || this.languageModel) {
             return;
         }
+
         this.languageModel = await LanguageModel.create({
             expectedInputs: [
                 {type: "text"},
@@ -56,7 +58,7 @@ export class PromptManager {
 
 By adhering to these directives, you will create a seamless and engaging user experience that feels like a natural conversation, all while operating efficiently on-device.
 
-DO NOT USE ASTERISKS.
+DO NOT USE ASTERISKS AND ONLY PLAIN TEXT. BE HUMORISTIC. BE VERY BRIEF. LIKE, VERY VERY BRIEF.
 `,
             },
           ]

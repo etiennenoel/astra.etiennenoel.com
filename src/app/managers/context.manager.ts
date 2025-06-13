@@ -57,6 +57,13 @@ export class ContextManager {
       // }
     })
 
+    this.eventStore.speechCompleted.subscribe(value => {
+      if(value) {
+        this.stopListening();
+        this.startListening();
+      }
+    })
+
     this.eventStore.isPaused.subscribe(value => {
       if (value === false) {
         this.startListening();
@@ -127,6 +134,8 @@ export class ContextManager {
     // Audio transcription of what we have recorded so far
     const audioBlob = await this.audioRecordingService.stopRecording();
 
+    this.speechSynthesisService.stop();
+
     const transcriptionStream = await this.promptManager.transcribe(audioBlob);
 
     let transcribedText = '';
@@ -136,9 +145,6 @@ export class ContextManager {
     }
 
     const agentResponseStream = this.promptManager.promptStreaming(transcribedText, imagePromptContent);
-
-    this.speechSynthesisService.stop();
-
 
     let sentenceBuffer = "";
     const sentenceRegex = /([^.!?]+[.!?])\s*/g;

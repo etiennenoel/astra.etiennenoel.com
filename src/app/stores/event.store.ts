@@ -18,4 +18,6 @@ export class EventStore {
   public readonly silenceDetected = new BehaviorSubject<void | boolean>(undefined);
 
   public readonly detectSilence = new BehaviorSubject<boolean>(false);
+
+  public readonly speechCompleted = new BehaviorSubject<void | boolean>(undefined);
 }

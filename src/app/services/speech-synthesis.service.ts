@@ -14,6 +14,7 @@ export class SpeechSynthesisService {
   constructor(
     @Inject(DOCUMENT) private document: Document,
     @Inject(PLATFORM_ID) private platformId: Object,
+    private readonly eventStore: EventStore,
     ) {
     if (isPlatformBrowser(this.platformId) && this.document.defaultView) {
       this.speechSynthesis = this.document.defaultView.speechSynthesis;
@@ -56,6 +57,7 @@ export class SpeechSynthesisService {
       if (sentence) {
         if (this.speechSynthesis) {
           try {
+            const self = this;
             const utterance = new SpeechSynthesisUtterance(sentence);
             if (this.selectedVoice) {
               utterance.voice = this.selectedVoice;
@@ -81,13 +83,19 @@ export class SpeechSynthesisService {
       //this.eventStore.agentResponseAvailable.next(remainingText);
       if (this.speechSynthesis) {
         try {
+          const self = this;
           const utterance = new SpeechSynthesisUtterance(remainingText);
           if (this.selectedVoice) {
             utterance.voice = this.selectedVoice;
           }
           utterance.rate = 0.5; // Adjust rate as desired (1.0 is default)
           utterance.pitch = 1;
+          utterance.onend = (event) => {
+            self.eventStore.speechCompleted.next(true);
+            // Your code here to execute after the speech is done
+          };
           this.speechSynthesis.speak(utterance);
+
         } catch (error) {
           console.error('Speech synthesis error:', error);
         }
