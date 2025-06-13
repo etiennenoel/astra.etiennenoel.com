@@ -17,43 +17,43 @@ export class DetectionParametersProvider implements SilenceDetectionParameters {
     return this.silenceEntryThresholdRMSFormControl.value ?? SILENCE_ENTRY_THRESHOLD_RMS;
   }
 
-  silenceEntryThresholdRMSFormControl = new FormControl<number>(SILENCE_ENTRY_THRESHOLD_RMS);
+  public silenceEntryThresholdRMSFormControl = new FormControl<number>(SILENCE_ENTRY_THRESHOLD_RMS);
 
   get silenceExitThresholdRMS(): number {
     return this.silenceExitThresholdRMSFormControl.value ?? SILENCE_EXIT_THRESHOLD_RMS;
   }
 
-  silenceExitThresholdRMSFormControl = new FormControl<number>(SILENCE_EXIT_THRESHOLD_RMS);
+  public silenceExitThresholdRMSFormControl = new FormControl<number>(SILENCE_EXIT_THRESHOLD_RMS);
 
   get silenceEntryThresholdZCR(): number {
     return this.silenceEntryThresholdZCRFormControl.value ?? SILENCE_ENTRY_THRESHOLD_ZCR;
   }
 
-  silenceEntryThresholdZCRFormControl = new FormControl<number>(SILENCE_ENTRY_THRESHOLD_ZCR);
+  public silenceEntryThresholdZCRFormControl = new FormControl<number>(SILENCE_ENTRY_THRESHOLD_ZCR);
 
   get silenceExitThresholdZCR(): number {
     return this.silenceExitThresholdZCRFormControl.value ?? SILENCE_EXIT_THRESHOLD_ZCR;
   }
 
-  silenceExitThresholdZCRFormControl = new FormControl<number>(SILENCE_EXIT_THRESHOLD_ZCR);
+  public silenceExitThresholdZCRFormControl = new FormControl<number>(SILENCE_EXIT_THRESHOLD_ZCR);
 
   get silenceDurationMs(): number {
     return this.silenceDurationMsFormControl.value ?? SILENT_DURATION_MS;
   }
 
-  silenceDurationMsFormControl = new FormControl<number>(SILENT_DURATION_MS);
+  public silenceDurationMsFormControl = new FormControl<number>(SILENT_DURATION_MS);
 
   get rmsHistoryLength(): number {
     return this.rmsHistoryLengthFormControl.value ?? RMS_HISTORY_LENGTH;
   }
 
-  rmsHistoryLengthFormControl = new FormControl<number>(RMS_HISTORY_LENGTH);
+  public rmsHistoryLengthFormControl = new FormControl<number>(RMS_HISTORY_LENGTH);
 
   get zcrHistoryLength(): number {
     return this.zcrHistoryLengthFormControl.value ?? ZCR_HISTORY_LENGTH;
   }
 
-  zcrHistoryLengthFormControl = new FormControl<number>(ZCR_HISTORY_LENGTH);
+  public zcrHistoryLengthFormControl = new FormControl<number>(ZCR_HISTORY_LENGTH);
 
   subscriptions: Subscription[] = [];
 

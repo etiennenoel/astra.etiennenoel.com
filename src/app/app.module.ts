@@ -22,6 +22,7 @@ import {ToastStore} from './stores/toast.store';
 import {ToastComponent} from './components/toast/toast.component';
 import { HomePage } from './pages/home/home.page';
 import {ConversationHistoryManager} from './managers/conversation-history.manager';
+import { AudioParametersFormComponent } from './components/audio-parameters-form/audio-parameters-form.component';
 import {AudioProcessor} from './processors/audio.processor';
 import {DetectionParametersProvider} from './providers/detection-parameters.provider';
 import {SpeechSynthesisService} from './services/speech-synthesis.service';
@@ -40,6 +41,7 @@ import {SpeechSynthesisService} from './services/speech-synthesis.service';
     ScreenshareViewComponent,
     ToastComponent,
     HomePage,
+    AudioParametersFormComponent,
   ],
   imports: [
     BrowserModule,

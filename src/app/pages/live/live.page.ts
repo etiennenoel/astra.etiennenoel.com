@@ -1,6 +1,7 @@
 import {Component, ViewChild, AfterViewInit, Inject, OnInit} from '@angular/core';
 import {CameraViewComponent} from '../../components/camera-view/camera-view.component';
 import {BaseComponent} from '../../components/base/base.component';
+import { FooterComponent } from '../../components/footer/footer.component';
 import {DOCUMENT} from '@angular/common';
 import {EventStore} from '../../stores/event.store';
 import {ContextManager} from '../../managers/context.manager';
@@ -20,6 +21,7 @@ import {ViewStateEnum} from '../../enums/view-state.enum';
   host:{"class": "home"},
 })
 export class LivePage extends BaseComponent implements OnInit {
+  @ViewChild(FooterComponent) footer!: FooterComponent;
   isPaused: boolean = false;
 
   state?: ViewStateInterface;

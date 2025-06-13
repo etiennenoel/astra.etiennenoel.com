@@ -1,0 +1,40 @@
+<div class="audio-parameters-form-container p-3 mb-3 border rounded position-absolute top-0 end-0">
+  <h5 class="mb-3">Audio Parameters</h5>
+  <form>
+    <div class="mb-1">
+      <label for="silenceThreshold" class="form-label">Silence Entry Threshold RMS</label>
+      <input type="number" class="form-control" id="silenceThreshold" [formControl]="detectionParametersProvider.silenceEntryThresholdRMSFormControl">
+    </div>
+
+    <div class="mb-1">
+      <label for="silenceThreshold" class="form-label">Silence Exit Threshold RMS</label>
+      <input type="number" class="form-control" id="silenceThreshold" [formControl]="detectionParametersProvider.silenceExitThresholdRMSFormControl">
+    </div>
+
+    <div class="mb-1">
+      <label for="silenceThreshold" class="form-label">Silence Entry Threshold ZCR</label>
+      <input type="number" class="form-control" id="silenceThreshold" [formControl]="detectionParametersProvider.silenceEntryThresholdZCRFormControl">
+    </div>
+
+
+    <div class="mb-1">
+      <label for="silenceThreshold" class="form-label">Silence Exit Threshold ZCR</label>
+      <input type="number" class="form-control" id="silenceThreshold" [formControl]="detectionParametersProvider.silenceExitThresholdZCRFormControl">
+    </div>
+
+    <div class="mb-1">
+      <label for="silenceThreshold" class="form-label">Silence Duration (ms)</label>
+      <input type="number" class="form-control" id="silenceThreshold" [formControl]="detectionParametersProvider.silenceDurationMsFormControl">
+    </div>
+
+    <div class="mb-1">
+      <label for="silenceThreshold" class="form-label">RMS History Length</label>
+      <input type="number" class="form-control" id="silenceThreshold" [formControl]="detectionParametersProvider.rmsHistoryLengthFormControl">
+    </div>
+    <div class="mb-1">
+      <label for="silenceThreshold" class="form-label">ZCR History Length</label>
+      <input type="number" class="form-control" id="silenceThreshold" [formControl]="detectionParametersProvider.zcrHistoryLengthFormControl">
+    </div>
+
+  </form>
+</div>

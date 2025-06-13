@@ -1,5 +1,6 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import {Inject, Injectable, EventEmitter, PLATFORM_ID} from '@angular/core';
 import {ToastStore} from "../stores/toast.store";
+import {isPlatformServer} from "@angular/common";
 
 @Injectable({
   providedIn: 'root'
@@ -10,9 +11,13 @@ export class ScreenshareRecordingService {
 
   constructor(
       private readonly toastStore: ToastStore,
+      @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
   async startScreenShare(videoElement: HTMLVideoElement): Promise<void> {
+    if (isPlatformServer(this.platformId)) {
+      return;
+    }
     this.videoElement = videoElement;
     this.resetStream(); // Stop any existing stream before starting a new one
     try {
@@ -46,6 +51,9 @@ export class ScreenshareRecordingService {
   }
 
   captureFrame(): HTMLCanvasElement | null {
+    if (isPlatformServer(this.platformId)) {
+      return null;
+    }
     if (!this.videoElement) {
       this.toastStore.publish({message:'Video feed or canvas not ready for capture.'})
       return null;

@@ -15,6 +15,7 @@ import {Router} from '@angular/router';
 })
 export class FooterComponent extends BaseComponent implements OnInit {
   state!: ViewStateInterface;
+  showAudioParametersForm: boolean = false;
 
   detectSilenceFormControl = new FormControl<boolean>(true);
 
@@ -64,6 +65,14 @@ export class FooterComponent extends BaseComponent implements OnInit {
     } else {
       this.detectSilenceFormControl.setValue(true); // Default to true if not set
     }
+
+    // Restore the showAudioParametersForm value from localStorage
+    const showAudioParametersForm = localStorage.getItem("showAudioParametersForm");
+    if (showAudioParametersForm !== null) {
+      this.showAudioParametersForm = showAudioParametersForm === 'true';
+    } else {
+      this.showAudioParametersForm = false; // Default to false if not set
+    }
   }
 
   captureContext() {
@@ -85,5 +94,12 @@ export class FooterComponent extends BaseComponent implements OnInit {
   exit() {
     this.state.pauseButtonClicked()
     this.router.navigateByUrl("/");
+  }
+
+  public toggleAudioParametersForm(): void {
+    this.showAudioParametersForm = !this.showAudioParametersForm;
+
+    // SAve to localStorage
+    localStorage.setItem("showAudioParametersForm", this.showAudioParametersForm.toString());
   }
 }

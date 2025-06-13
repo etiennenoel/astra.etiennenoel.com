@@ -17,10 +17,9 @@ export class PromptManager {
     }
 
     async setup () {
-      if (isPlatformServer(this.platformId)) {
-        return;
-      }
-
+        if (isPlatformServer(this.platformId)) {
+            return;
+        }
         this.languageModel = await LanguageModel.create({
             expectedInputs: [
                 {type: "text"},
@@ -85,6 +84,9 @@ By adhering to these directives, you will create a seamless and engaging user ex
     }
 
     async transcribe(audioBlob: Blob): Promise<ReadableStream> {
+        if (isPlatformServer(this.platformId)) {
+            return new ReadableStream(); // Or handle appropriately for server context
+        }
         // More efficient to create a new model than polluting the old session
         const languageModel = await LanguageModel.create({
             expectedInputs: [
