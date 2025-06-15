@@ -26,6 +26,7 @@ import { AudioParametersFormComponent } from './components/audio-parameters-form
 import {AudioProcessor} from './processors/audio.processor';
 import {DetectionParametersProvider} from './providers/detection-parameters.provider';
 import {SpeechSynthesisService} from './services/speech-synthesis.service';
+import { ExpenseRepository } from './repositories/expense.repository';
 
 @NgModule({
   declarations: [
@@ -73,6 +74,9 @@ import {SpeechSynthesisService} from './services/speech-synthesis.service';
     ToastStore,
 
     DetectionParametersProvider,
+
+    // Repositories
+    ExpenseRepository,
   ],
   bootstrap: [RootComponent]
 })
