@@ -1,3 +1,0 @@
-- Make sure that all the components you create are explicitly marked with standalone:false, imported to app.module.
-- Ensure that you run npm install and npm run build to verify that it compiles.
-- Finally, do not write any tests since this will add unwanted complexity because this is a playground project.
